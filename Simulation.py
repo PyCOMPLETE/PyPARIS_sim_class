@@ -1,4 +1,5 @@
 import os
+import Simulation_parameters as pp
 
 import PyPARIS.communication_helpers as ch
 import numpy as np
@@ -11,7 +12,9 @@ import h5py
 
 from PyHEADTAIL.particles.slicing import UniformBinSlicer
 
-import Simulation_parameters as pp
+
+
+
 
 
 
@@ -116,7 +119,7 @@ class Simulation(object):
                             N_min_Dh_main = 10,
                             N_mp_max=pp.N_mp_max_quad,
                             nel_mp_ref_0=nel_mp_ref_0,
-                            B_multip=B_multip_quad,
+                            B_multip=pp.B_multip_quad,
                             filename_init_MP_state=pp.filename_init_MP_state_quad)
 
 
@@ -382,7 +385,7 @@ class Simulation(object):
             print 'Stop simulation due to beam losses.'
         
         # 2. for the emittance growth
-        if pp.flag_check_emittance_growth
+        if pp.flag_check_emittance_growth:
             epsn_x_max = (pp.epsn_x)*(1 + pp.epsn_x_max_growth_fraction)
             epsn_y_max = (pp.epsn_y)*(1 + pp.epsn_y_max_growth_fraction)
             if not pp.footprint_mode and (self.bunch.epsn_x() > epsn_x_max or self.bunch.epsn_y() > epsn_y_max):
