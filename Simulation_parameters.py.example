@@ -1,57 +1,28 @@
 from scipy.constants import c
 
 
-#path of your PyFRIENDS
-#PyFRIENDS = '/home/HPC/giadarol/sim_workspace_8_11_2018/'
-
-
-# machine and beam settings
+#####  Machine and beam settings
 
 # n_segments needs to be None if optics_pickle_file is specified
-#~ optics_pickle_file = 'lhc2018_25cm_only_triplets_IR15_b1_optics.pkl'
-#~ n_segments = None
-#~ beta_x =  None
-#~ beta_y =  None
-#~ Q_x = None
-#~ Q_y = None
+# optics_pickle_file = 'lhc2018_25cm_only_triplets_IR15_b1_optics.pkl'
+# n_segments = None
+# beta_x =  None
+# beta_y =  None
+# Q_x = None
+# Q_y = None
 
 optics_pickle_file = None
-#~ beta_x =  400.0
-#~ beta_y =  400.0
+beta_x =  400.0
+beta_y =  400.0
 Q_x = 62.27
 Q_y = 60.295
 
-# Stop criteria parameters  
-# 1. turns
-N_turns = 128
-N_turns_target = 20000
-# 2. emittance growth
-flag_check_emittance_growth = True
-epsn_x_max_growth_fraction = 0.5
-epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
-
 n_non_parallelizable = 2 #rf and aperture
-
-
-intensity = 1.2e+11
-epsn_x = 2.5e-6
-epsn_y = 2.5e-6
-
 machine_configuration = 'LHC-collision'
-
-sim_stop_frac = 0.9
 
 octupole_knob = 0.
 Qp_x = 0.
 Qp_y = 0.
-
-
-sigma_z = 1.2e-9/4*c
-
-z_cut = 2.5e-9/2*c
-
-x_kick_in_sigmas = 0.1
-y_kick_in_sigmas = 0.1
 
 # transverse damper settings
 enable_transverse_damper = False
@@ -60,14 +31,46 @@ dampingrate_y = 100.
 if enable_transverse_damper: n_non_parallelizable += 1
 
 
-# footprint settings
+#####  Stop criteria 
+
+# 1. Turns
+N_turns = 128
+N_turns_target = 20000
+
+# 2. Emittance growth
+flag_check_emittance_growth = True
+epsn_x_max_growth_fraction = 0.5
+epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
+
+# 3. Losses
+sim_stop_frac = 0.9
+
+
+#####  Beam description
+
+intensity = 1.2e+11
+epsn_x = 2.5e-6
+epsn_y = 2.5e-6
+
+sigma_z = 1.2e-9/4*c
+
+#####  Other parameters
+z_cut = 2.5e-9/2*c
+
+x_kick_in_sigmas = 0.1
+y_kick_in_sigmas = 0.1
+
+
+#### footprint settings
 footprint_mode = False
 #n_macroparticles_for_footprint_map = 5000000
 n_macroparticles_for_footprint_map = 500000
 n_macroparticles_for_footprint_track = 5000
 
 
-# general e-cloud settings
+##### e-cloud settings
+
+# General
 Dh_sc_ext = .8e-3
 target_size_internal_grid_sigma = 10.
 target_Dh_internal_grid_sigma = 0.2
@@ -82,7 +85,7 @@ pyecl_input_folder = './pyecloud_config'
 
 sey = 1.30
 
-#~ Numerical Parameters
+# Numerical Parameters
 n_segments = 16
 n_slices = 500
 density_macroparticles_per_slice = 5000
