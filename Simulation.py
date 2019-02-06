@@ -8,15 +8,7 @@ import time
 import pickle
 import h5py
 
-
-
 from PyHEADTAIL.particles.slicing import UniformBinSlicer
-
-
-
-
-
-
 
 class Simulation(object):
     def __init__(self):
@@ -46,7 +38,7 @@ class Simulation(object):
                         optics_dict=optics)
         self.n_segments = self.machine.transverse_map.n_segments
         
-        # compute sigma
+        # compute sigma at injection point
         inj_opt = self.machine.transverse_map.get_injection_optics()
         sigma_x_inj = np.sqrt(inj_opt['beta_x']*pp.epsn_x/self.machine.betagamma)
         sigma_y_inj = np.sqrt(inj_opt['beta_y']*pp.epsn_y/self.machine.betagamma)
