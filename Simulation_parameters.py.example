@@ -59,7 +59,7 @@ n_macroparticles = macroparticles_per_slice*n_slices
 
 
 #################
-# Stop criteria #  
+# Stop Criteria #  
 #################
 
 # 1. Turns
@@ -77,12 +77,13 @@ epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
 # Footprint Settings #
 ######################
 
-folder_pathotprint_mode = False
+footprint_mode = False
 n_macroparticles_for_footprint_map = 500000
 n_macroparticles_for_footprint_track = 5000
 
+
 ####################
-# e-cloud settings #
+# E-Cloud Settings #
 ####################
 
 # General E-Cloud Settings
@@ -103,11 +104,11 @@ target_size_internal_grid_sigma = 10.
 target_Dh_internal_grid_sigma = 0.2
 N_nodes_discard = 5.
 
-# Enable kicks different planes
+# Enable Kicks Different Planes
 enable_kick_x = True
 enable_kick_y = True
 
-# Dedicated dipole E-Cloud Settings
+# Dedicated Dipole E-Cloud Settings
 enable_arc_dip = False
 fraction_device_dip = 0.65
 init_unif_edens_flag_dip = 1
