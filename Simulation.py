@@ -8,14 +8,7 @@ import time
 import pickle
 import h5py
 
-
-
 from PyHEADTAIL.particles.slicing import UniformBinSlicer
-
-
-
-
-
 
 
 class Simulation(object):
@@ -101,6 +94,7 @@ class Simulation(object):
                             N_mp_max=pp.N_mp_max_dip,
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=pp.B_multip_dip,
+                            enable_kick_x = pp.enable_kick_x,
                             enable_kick_y = pp.enable_kick_y)
                         
         if pp.enable_arc_quad:               
@@ -122,6 +116,7 @@ class Simulation(object):
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=pp.B_multip_quad,
                             filename_init_MP_state=pp.filename_init_MP_state_quad,
+                            enable_kick_x = pp.enable_kick_x,
                             enable_kick_y = pp.enable_kick_y)
 
 
@@ -209,21 +204,23 @@ class Simulation(object):
                             chamb_type = 'polyg',
                             x_aper=None, y_aper=None,
                             filename_chm=buildup_folder+'/'+chamber_fname, 
+                            PyPICmode = pp.PyPICmode,
                             Dh_sc=pp.Dh_sc_ext,
-                            PyPICmode = 'ShortleyWeller_WithTelescopicGrids',
-                            f_telescope = 0.3,
+                            N_min_Dh_main = pp.N_min_Dh_main,
+                            f_telescope = pp.f_telescope,
+                            N_nodes_discard = pp.N_nodes_discard,                             
                             target_grid = {'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_local+x_beam_offset, 'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_local+x_beam_offset,
                                            'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_local+y_beam_offset, 'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_local+y_beam_offset,
                                            'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_y_local},
-                            N_nodes_discard=5.,
-                            N_min_Dh_main=10,
                             N_mp_max=pp.N_mp_max_quad,
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=B_multip_curr,
                             filename_init_MP_state=buildup_folder+'/'+pp.name_MP_state_file_kick_elements, 
                             x_beam_offset=x_beam_offset,
-                            y_beam_offset=y_beam_offset)   
-                            
+                            y_beam_offset=y_beam_offset,
+                            enable_kick_x = pp.enable_kick_x,
+                            enable_kick_y = pp.enable_kick_y)
+
                     my_new_part.append(ecloud_ele)
                     self.my_list_eclouds.append(ecloud_ele)                          
                 
