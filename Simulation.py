@@ -88,19 +88,20 @@ class Simulation(object):
                             chamb_type = pp.chamb_type,
                             x_aper=pp.x_aper, y_aper=pp.y_aper,
                             filename_chm=pp.filename_chm, 
+                            PyPICmode = pp.PyPICmode,
                             Dh_sc=pp.Dh_sc_ext,
-                            PyPICmode = 'ShortleyWeller_WithTelescopicGrids',
-                            f_telescope = 0.3,
+                            N_min_Dh_main = pp.N_min_Dh_main,
+                            f_telescope = pp.f_telescope,
+                            N_nodes_discard = pp.N_nodes_discard, 
                             target_grid = {'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth, 'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
                                            'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
                                            'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth},
-                            N_nodes_discard = 5.,
-                            N_min_Dh_main = 10,
                             init_unif_edens_flag=pp.init_unif_edens_flag_dip,
                             init_unif_edens=pp.init_unif_edens_dip, 
                             N_mp_max=pp.N_mp_max_dip,
                             nel_mp_ref_0=nel_mp_ref_0,
-                            B_multip=pp.B_multip_dip)
+                            B_multip=pp.B_multip_dip,
+                            enable_kick_y = pp.enable_kick_y)
                         
         if pp.enable_arc_quad:               
             ecloud_quad = PyEC4PyHT.Ecloud(slice_by_slice_mode=True,
@@ -108,19 +109,20 @@ class Simulation(object):
                             Dt_ref=pp.Dt_ref, pyecl_input_folder=pp.pyecl_input_folder,
                             chamb_type = pp.chamb_type,
                             x_aper=pp.x_aper, y_aper=pp.y_aper,
-                            filename_chm=pp.filename_chm, 
+                            filename_chm=pp.filename_chm,
+                            PyPICmode = pp.PyPICmode,
                             Dh_sc=pp.Dh_sc_ext,
-                            PyPICmode = 'ShortleyWeller_WithTelescopicGrids',
-                            f_telescope = 0.3,
+                            N_min_Dh_main = pp.N_min_Dh_main,
+                            f_telescope = pp.f_telescope,
+                            N_nodes_discard = pp.N_nodes_discard,  
                             target_grid = {'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth, 'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
                                            'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
                                            'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth},
-                            N_nodes_discard = 5.,
-                            N_min_Dh_main = 10,
                             N_mp_max=pp.N_mp_max_quad,
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=pp.B_multip_quad,
-                            filename_init_MP_state=pp.filename_init_MP_state_quad)
+                            filename_init_MP_state=pp.filename_init_MP_state_quad,
+                            enable_kick_y = pp.enable_kick_y)
 
 
                         
