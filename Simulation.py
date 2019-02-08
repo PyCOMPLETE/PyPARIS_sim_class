@@ -481,6 +481,13 @@ def get_sim_instance(N_cores_pretend, id_pretend):
             comm=DummyComm(N_cores_pretend, id_pretend))
     return myCPUring.sim_content
 
+def get_serial_CPUring():
+    from PyPARIS.ring_of_CPUs import RingOfCPUs
+    myCPUring = RingOfCPUs(Simulation())
+    return myCPUring
+
+    
+
 
 class ParticleTrajectories(object):
     def __init__(self, n_record, n_turns):
