@@ -100,9 +100,18 @@ PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
 N_min_Dh_main = 10.
 Dh_sc_ext = .8e-3
 f_telescope = 0.3
+N_nodes_discard = 5.
 target_size_internal_grid_sigma = 10.
 target_Dh_internal_grid_sigma = 0.2
-N_nodes_discard = 5.
+custom_target_grid_arcs = None
+
+# # Uncomment for custom grid
+# custom_target_grid_arcs = {
+#     'x_min_target': -3e-3,
+#     'x_max_target': 3e-3,
+#     'y_min_target': -3.1e-3,
+#     'y_max_target': 3.1e-3,
+#     'Dh_target': 7e-5}
 
 # Enable Kicks Different Planes
 enable_kick_x = True
