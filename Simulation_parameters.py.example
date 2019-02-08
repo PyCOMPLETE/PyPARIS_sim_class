@@ -108,9 +108,9 @@ custom_target_grid_arcs = None
 # # Uncomment for custom grid
 # custom_target_grid_arcs = {
 #     'x_min_target': -3e-3,
-#     'x_max_target': 3e-3
-#     'y_min_target': -3.1e-3
-#     'y_max_target': 3.1e-3
+#     'x_max_target': 3e-3,
+#     'y_min_target': -3.1e-3,
+#     'y_max_target': 3.1e-3,
 #     'Dh_target': 7e-5}
 
 # Enable Kicks Different Planes
