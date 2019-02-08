@@ -74,6 +74,14 @@ class Simulation(object):
         # prepare e-cloud
         import PyECLOUD.PyEC4PyHT as PyEC4PyHT
         
+        target_grid_arcs = {
+                'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth,
+                'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
+                'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 
+                'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
+                'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth}
+        self.target_grid_arcs = target_grid_arcs
+
         if pp.enable_arc_dip:
             ecloud_dip = PyEC4PyHT.Ecloud(slice_by_slice_mode=True,
                             L_ecloud=self.machine.circumference/self.n_kick_smooth*pp.fraction_device_dip, slicer=None, 
@@ -86,9 +94,7 @@ class Simulation(object):
                             N_min_Dh_main = pp.N_min_Dh_main,
                             f_telescope = pp.f_telescope,
                             N_nodes_discard = pp.N_nodes_discard, 
-                            target_grid = {'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth, 'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
-                                           'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
-                                           'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth},
+                            target_grid = target_grid_arcs,                          
                             init_unif_edens_flag=pp.init_unif_edens_flag_dip,
                             init_unif_edens=pp.init_unif_edens_dip, 
                             N_mp_max=pp.N_mp_max_dip,
@@ -109,9 +115,7 @@ class Simulation(object):
                             N_min_Dh_main = pp.N_min_Dh_main,
                             f_telescope = pp.f_telescope,
                             N_nodes_discard = pp.N_nodes_discard,  
-                            target_grid = {'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth, 'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
-                                           'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
-                                           'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth},
+                            target_grid = target_grid_arcs,
                             N_mp_max=pp.N_mp_max_quad,
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=pp.B_multip_quad,
