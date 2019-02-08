@@ -448,6 +448,26 @@ class Simulation(object):
         piece = ch.buffer_2_beam(buf)
         return piece
 
+class DummyComm(object):
+
+    def __init__(self, N_cores_pretend, pretend_proc_id):
+        self.N_cores_pretend = N_cores_pretend
+        self.pretend_proc_id = pretend_proc_id
+
+    def Get_size(self):
+        return self.N_cores_pretend
+
+    def Get_rank(self):
+        return self.pretend_proc_id
+
+    def Barrier(self):
+        pass
+
+def get_sim_instance(N_cores_pretend, id_pretend):
+    from PyPARIS.ring_of_CPUs import RingOfCPUs
+    myCPUring = RingOfCPUs(Simulation(),
+            comm=DummyComm(N_cores_pretend, id_pretend))
+    return myCPUring.sim_content
 
 
 class ParticleTrajectories(object):
