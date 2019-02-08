@@ -74,12 +74,15 @@ class Simulation(object):
         # prepare e-cloud
         import PyECLOUD.PyEC4PyHT as PyEC4PyHT
         
-        target_grid_arcs = {
-                'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth,
-                'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
-                'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 
-                'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
-                'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth}
+        if pp.custom_target_grid_arcs is not None:
+            target_grid_arcs = pp.custom_target_grid_arcs
+        else:
+            target_grid_arcs = {
+                    'x_min_target':-pp.target_size_internal_grid_sigma*sigma_x_smooth,
+                    'x_max_target':pp.target_size_internal_grid_sigma*sigma_x_smooth,
+                    'y_min_target':-pp.target_size_internal_grid_sigma*sigma_y_smooth, 
+                    'y_max_target':pp.target_size_internal_grid_sigma*sigma_y_smooth,
+                    'Dh_target':pp.target_Dh_internal_grid_sigma*sigma_x_smooth}
         self.target_grid_arcs = target_grid_arcs
 
         if pp.enable_arc_dip:
