@@ -28,7 +28,8 @@ for i_ss, ss in enumerate(list_slice_objects[::-1]):
     if np.mod(i_ss, 20)==0:
         print("%d / %d"%(i_ss, N_slices))
     first_ecloud.track(ss)
-    z_centers.append(ss.slice_info['z_bin_center'])
+    if ss.slice_info != 'unsliced':
+        z_centers.append(ss.slice_info['z_bin_center'])
 t_end = time.mktime(time.localtime())
 
 print('Track time %.2f s' % (t_end - t_start))
