@@ -1,6 +1,5 @@
 import sys, os
-sys.path.append(os.path.expanduser('../../../'))
-
+import shutil
 import PyECLOUD.myfilemanager as mfm
 import PyECLOUD.mystyle as ms
 
@@ -11,9 +10,14 @@ from matplotlib.ticker import MaxNLocator
 from scipy.constants import e as qe
 
 N_discard = 10
-
-gen_movie = False
+tag = 'movie_ecloud'
+gen_movie = True 
 z_single_frame_interactive = 1e-2 
+
+# ======================
+
+folder_movie = 'temp_'+tag+'_frames'
+os.mkdir(folder_movie)
 
 ob = mfm.myloadmat_to_obj('pinch_pic_data.mat')
 
@@ -120,18 +124,18 @@ for i_frame, z_obs in enumerate(list(z_movie) + [z_single_frame_interactive]):
         ob.zg[iz_obs]/ob.sigma_z_beam))
     
     if gen_movie and i_frame < len(z_movie):
-        fig2.savefig('temp/frame_%03d.png'%i_frame, dpi=150)
+        fig2.savefig(folder_movie+'/frame_%03d.png'%i_frame, dpi=150)
 
 
 if gen_movie:
-    folder_movie = 'temp'
-    tag = 'temp'
     os.system(' '.join([
         'ffmpeg',
         '-i %s'%folder_movie+'/frame_%03d.png',
         '-c:v libx264 -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2,setpts=4.*PTS"',
         '-profile:v high -level:v 4.0 -pix_fmt yuv420p -crf 22',
         '-codec:a aac movie_%s.mp4'%tag])) 
-    
+   
+    shutil.rmtree(folder_movie)
+
 plt.show()
 
