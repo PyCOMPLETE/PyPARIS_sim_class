@@ -30,6 +30,10 @@ for i_ss, ss in enumerate(list_slice_objects[::-1]):
     first_ecloud.track(ss)
     if ss.slice_info != 'unsliced':
         z_centers.append(ss.slice_info['z_bin_center'])
+
+first_ecloud._finalize()
+z_centers = z_centers[::-1] # HEADTAIL convention
+
 t_end = time.mktime(time.localtime())
 
 print('Track time %.2f s' % (t_end - t_start))

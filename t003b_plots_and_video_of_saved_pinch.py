@@ -13,7 +13,7 @@ from scipy.constants import e as qe
 N_discard = 10
 
 gen_movie = False
-z_single_frame_interactive = -21e-2
+z_single_frame_interactive = 1e-2 
 
 ob = mfm.myloadmat_to_obj('pinch_pic_data.mat')
 
