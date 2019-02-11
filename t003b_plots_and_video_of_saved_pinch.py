@@ -16,8 +16,9 @@ z_single_frame_interactive = 1e-2
 
 # ======================
 
-folder_movie = 'temp_'+tag+'_frames'
-os.mkdir(folder_movie)
+if gen_movie:
+    folder_movie = 'temp_'+tag+'_frames'
+    os.mkdir(folder_movie)
 
 ob = mfm.myloadmat_to_obj('pinch_pic_data.mat')
 
