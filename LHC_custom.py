@@ -2,85 +2,94 @@ from PyHEADTAIL.machines.synchrotron import BasicSynchrotron
 import numpy as np
 from scipy.constants import c, e, m_p
 
+class EmptyObject(object):
+    pass
+
 class LHC(BasicSynchrotron):
 
     def __init__(self, n_segments, machine_configuration, optics_dict=None, **kwargs):
         
         
-        circumference     = 26658.8832
-        longitudinal_mode = 'non-linear'
-        p_increment       = 0.
-        charge            = e
-        mass              = m_p
-        alpha             = 3.225e-04
+        pp = EmptyObject()
+
+        pp.n_segments = n_segments
+        pp.machine_configuration = machine_configuration
+        pp.optics_dict = optics_dict
+
+        pp.circumference     = 26658.8832
+        pp.longitudinal_mode = 'non-linear'
+        pp.p_increment       = 0.
+        pp.charge            = e
+        pp.mass              = m_p
+        pp.alpha             = 3.225e-04
         
 
-        if machine_configuration =='HLLHC-injection':
-            alpha_x        = 0. 
-            beta_x         = 92.7 
-            D_x            = 0. 
-            alpha_y        = 0. 
-            beta_y         = 93.2 
-            D_y            = 0.
+        if pp.machine_configuration =='HLLHC-injection':
+            pp.alpha_x        = 0. 
+            pp.beta_x         = 92.7 
+            pp.D_x            = 0. 
+            pp.alpha_y        = 0. 
+            pp.beta_y         = 93.2 
+            pp.D_y            = 0.
 
-            accQ_x         = 62.28
-            accQ_y         = 60.31
+            pp.accQ_x         = 62.28
+            pp.accQ_y         = 60.31
             
-            h_RF           = 35640
-            V_RF           = 8e6
-            dphi_RF        = 0.
+            pp.h_RF           = 35640
+            pp.V_RF           = 8e6
+            pp.dphi_RF        = 0.
             
-            p0 = 450.e9 * e /c
+            pp.p0 = 450.e9 * e /c
 
-        elif machine_configuration =='HLLHC-collision':
-            alpha_x        = 0. 
-            beta_x         = 92.7 
-            D_x            = 0. 
-            alpha_y        = 0. 
-            beta_y         = 93.2 
-            D_y            = 0.
+        elif pp.machine_configuration =='HLLHC-collision':
+            pp.alpha_x        = 0. 
+            pp.beta_x         = 92.7 
+            pp.D_x            = 0. 
+            pp.alpha_y        = 0. 
+            pp.beta_y         = 93.2 
+            pp.D_y            = 0.
 
-            accQ_x         = 62.31
-            accQ_y         = 60.32
+            pp.accQ_x         = 62.31
+            pp.accQ_y         = 60.32
             
-            h_RF           = 35640
-            V_RF           = 16e6
-            dphi_RF        = 0.
+            pp.h_RF           = 35640
+            pp.V_RF           = 16e6
+            pp.dphi_RF        = 0.
             
-            p0 = 7000e9 * e /c
+            pp.p0 = 7000e9 * e /c
             
         elif machine_configuration =='LHC-collision':
-            alpha_x        = 0. 
-            beta_x         = 92.7 
-            D_x            = 0. 
-            alpha_y        = 0. 
-            beta_y         = 93.2 
-            D_y            = 0.
+            pp.alpha_x        = 0. 
+            pp.beta_x         = 92.7 
+            pp.D_x            = 0. 
+            pp.alpha_y        = 0. 
+            pp.beta_y         = 93.2 
+            pp.D_y            = 0.
 
-            accQ_x         = 62.31
-            accQ_y         = 60.32
+            pp.accQ_x         = 62.31
+            pp.accQ_y         = 60.32
             
-            h_RF           = 35640
-            V_RF           = 12e6
-            dphi_RF        = 0.
+            pp.h_RF           = 35640
+            pp.V_RF           = 12e6
+            pp.dphi_RF        = 0.
             
-            p0 = 7000e9 * e /c
+            pp.p0 = 7000e9 * e /c
             
 
         else:
             raise ValueError('ERROR: unknown machine configuration', machine_configuration)
 
         # detunings
-        Qp_x        = 0
-        Qp_y        = 0
+        pp.Qp_x        = 0
+        pp.Qp_y        = 0
         
-        app_x       = 0
-        app_y       = 0
-        app_xy      = 0
+        pp.app_x       = 0
+        pp.app_y       = 0
+        pp.app_xy      = 0
         
-        i_octupole_focusing = None
-        i_octupole_defocusing = None
-        octupole_knob = None	
+        pp.i_octupole_focusing = None
+        pp.i_octupole_defocusing = None
+        pp.octupole_knob = None	
         
         for attr in kwargs.keys():
             if kwargs[attr] is not None:
@@ -89,28 +98,33 @@ class LHC(BasicSynchrotron):
                 else:
                     str2print = repr(kwargs[attr])
                 self.prints('Synchrotron init. From kwargs: %s = %s'
-                            % (attr, str2print))
-                temp =  kwargs[attr]
-                exec('%s = temp'%attr)
+                                    % (attr, str2print))
+                
+                if not hasattr(pp, attr):
+                    raise NameError("I don't understand %s"%attr)
+
+                setattr(pp, attr, kwargs[attr]) 
                 
 
-        if i_octupole_focusing is not None or i_octupole_defocusing is not None:
-            if octupole_knob is not None:
+        if pp.i_octupole_focusing is not None or pp.i_octupole_defocusing is not None:
+            if pp.octupole_knob is not None:
                 raise ValueError('octupole_knobs and octupole currents cannot be used at the same time!')
-            app_x, app_y, app_xy = self._anharmonicities_from_octupole_current_settings(i_octupole_focusing, i_octupole_defocusing)
-            self.i_octupole_focusing = i_octupole_focusing
-            self.i_octupole_defocusing = i_octupole_defocusing
+            pp.app_x, pp.app_y, pp.app_xy = self._anharmonicities_from_octupole_current_settings(
+                pp.i_octupole_focusing, pp.i_octupole_defocusing)
+            self.i_octupole_focusing = pp.i_octupole_focusing
+            self.i_octupole_defocusing = pp.i_octupole_defocusing
             
-        if octupole_knob is not None:	
-            if i_octupole_focusing is not None or i_octupole_defocusing is not None:
+        if pp.octupole_knob is not None:	
+            if pp.i_octupole_focusing is not None or pp.i_octupole_defocusing is not None:
                 raise ValueError('octupole_knobs and octupole currents cannot be used at the same time!')
-            i_octupole_focusing, i_octupole_defocusing =  self._octupole_currents_from_octupole_knobs(octupole_knob, p0)
-            app_x, app_y, app_xy = self._anharmonicities_from_octupole_current_settings(i_octupole_focusing, i_octupole_defocusing)		
-            self.i_octupole_focusing = i_octupole_focusing
-            self.i_octupole_defocusing = i_octupole_defocusing
+            pp.i_octupole_focusing, pp.i_octupole_defocusing = self._octupole_currents_from_octupole_knobs(pp.octupole_knob, pp.p0)
+            pp.app_x, pp.app_y, pp.app_xy = self._anharmonicities_from_octupole_current_settings(
+                pp.i_octupole_focusing, pp.i_octupole_defocusing)		
+            self.i_octupole_focusing = pp.i_octupole_focusing
+            self.i_octupole_defocusing = pp.i_octupole_defocusing
             
-        if optics_dict is not None:
-            if n_segments is not None: raise ValueError('n_segments cannot be provided if optics_mode = "non-smooth"')
+        if pp.optics_dict is not None:
+            if pp.n_segments is not None: raise ValueError('n_segments cannot be provided if optics_mode = "non-smooth"')
             
             for vv in 'beta_x beta_y D_x D_y alpha_x alpha_y s accQ_x accQ_y'.split():
                 if vv in kwargs:
@@ -118,45 +132,46 @@ class LHC(BasicSynchrotron):
                         raise ValueError('%s cannot be provided when optics_dict is given!'%vv)
             
 
-            n_segments = None
-            circumference = None
-            name = optics_dict['name']
+            pp.n_segments = None
+            pp.circumference = None
+            pp.name = pp.optics_dict['name']
             
-            beta_x = optics_dict['beta_x']
-            beta_y = optics_dict['beta_y'] 
+            pp.beta_x = pp.optics_dict['beta_x']
+            pp.beta_y = pp.optics_dict['beta_y'] 
             
             try:
-                D_x = optics_dict['D_x']	
+                pp.D_x = pp.optics_dict['D_x']	
             except KeyError:
-                D_x = 0*np.array(optics_dict['s'])
+                pp.D_x = 0*np.array(pp.optics_dict['s'])
             try:
-                D_y = kwargs['D_y']	
+                pp.D_y = kwargs['D_y']	
             except KeyError:
-                D_y = 0*np.array(optics_dict['s'])
+                pp.D_y = 0*np.array(pp.optics_dict['s'])
                     
-            alpha_x = optics_dict['alpha_x']
-            alpha_y = optics_dict['alpha_y']
+            pp.alpha_x = pp.optics_dict['alpha_x']
+            pp.alpha_y = pp.optics_dict['alpha_y']
             
-            s = optics_dict['s']
+            pp.s = pp.optics_dict['s']
             
-            accQ_x = optics_dict['accQ_x']
-            accQ_y = optics_dict['accQ_y']
-            optics_mode = 'non-smooth'
+            pp.accQ_x = pp.optics_dict['accQ_x']
+            pp.accQ_y = pp.optics_dict['accQ_y']
+            pp.optics_mode = 'non-smooth'
         else:
-            optics_mode = 'smooth'
-            s = None
-            name = None
+            pp.optics_mode = 'smooth'
+            pp.s = None
+            pp.name = None
         
         
         
         
-        super(LHC, self).__init__(optics_mode=optics_mode, circumference=circumference, n_segments=n_segments,
-             s=s, name=name, 
-             alpha_x=alpha_x, beta_x=beta_x, D_x=D_x, alpha_y=alpha_y, beta_y=beta_y, D_y=D_y,
-             accQ_x=accQ_x, accQ_y=accQ_y, Qp_x=Qp_x, Qp_y=Qp_y, app_x=app_x, app_y=app_y, app_xy=app_xy,
-             alpha_mom_compaction=alpha, longitudinal_mode=longitudinal_mode,
-             h_RF=np.atleast_1d(h_RF), V_RF=np.atleast_1d(V_RF), dphi_RF=np.atleast_1d(dphi_RF), p0=p0, p_increment=p_increment,
-             charge=charge, mass=mass, RF_at='end_of_transverse')
+        super(LHC, self).__init__(optics_mode=pp.optics_mode, circumference=pp.circumference, n_segments=pp.n_segments,
+             s=pp.s, name=pp.name, 
+             alpha_x=pp.alpha_x, beta_x=pp.beta_x, D_x=pp.D_x, alpha_y=pp.alpha_y, beta_y=pp.beta_y, D_y=pp.D_y,
+             accQ_x=pp.accQ_x, accQ_y=pp.accQ_y, Qp_x=pp.Qp_x, Qp_y=pp.Qp_y, app_x=pp.app_x, app_y=pp.app_y, app_xy=pp.app_xy,
+             alpha_mom_compaction=pp.alpha, longitudinal_mode=pp.longitudinal_mode,
+             h_RF=np.atleast_1d(pp.h_RF), V_RF=np.atleast_1d(pp.V_RF), dphi_RF=np.atleast_1d(pp.dphi_RF), 
+             p0=pp.p0, p_increment=pp.p_increment,
+             charge=pp.charge, mass=pp.mass, RF_at='end_of_transverse')
              
     def _anharmonicities_from_octupole_current_settings(self, i_octupole_focusing, i_octupole_defocusing):
                 """Calculate the constants of proportionality app_x, app_y and

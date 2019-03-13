@@ -18,7 +18,7 @@ class SimulationStatus(object):
 		lines.append('present_part_done = %s\n'%repr(self.present_part_done))
 		lines.append('present_part_running = %s\n'%repr(self.present_part_running))
 		
-		with open(self.filename, 'wb') as fid:
+		with open(self.filename, 'w') as fid:
 			fid.writelines(lines)
 			
 	def load_from_file(self):
