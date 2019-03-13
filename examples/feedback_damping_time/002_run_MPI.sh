@@ -3,4 +3,8 @@
 export PYTHONPATH=$PYTHONPATH:../../../
 
 # Run MPI
-mpiexec -n 4 ../../../PyPARIS/withmpi.py sim_class=PyPARIS_sim_class.Simulation.Simulation
+for i in 1 2 3
+do
+    echo "Run $i"
+    mpiexec -n 3 ../../../PyPARIS/withmpi.py sim_class=PyPARIS_sim_class.Simulation.Simulation
+done

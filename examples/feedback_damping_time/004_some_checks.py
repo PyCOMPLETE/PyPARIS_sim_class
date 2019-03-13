@@ -19,7 +19,9 @@ tau_damp_y = 100.
 flag_check_Qs = True
 Q_s = np.nan
 
-ob = mfm.monitorh5_to_obj('bunch_evolution_00.h5')
+#ob = mfm.monitorh5_to_obj('bunch_evolution_00.h5')
+ob = mfm.monitorh5list_to_obj(
+        ['bunch_evolution_%02d.h5'%ii for ii in range(3)])
 
 
 plt.close('all')
