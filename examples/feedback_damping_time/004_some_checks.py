@@ -13,7 +13,7 @@ import mystyle as ms
 tag = 'noecloud'
 
 flag_check_damp_time = True
-tau_damp_x = 200.
+tau_damp_x = 50.
 tau_damp_y = 100.
 
 flag_check_Qs = True
