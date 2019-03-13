@@ -490,7 +490,7 @@ def get_sim_instance(N_cores_pretend, id_pretend):
 
 def get_serial_CPUring():
     from PyPARIS.ring_of_CPUs import RingOfCPUs
-    myCPUring = RingOfCPUs(Simulation())
+    myCPUring = RingOfCPUs(Simulation(), force_serial=True)
     return myCPUring
 
     
