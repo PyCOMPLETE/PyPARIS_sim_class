@@ -52,7 +52,7 @@ x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 500
+n_slices = 50
 z_cut = 2.5e-9/2*c # For slicing
 macroparticles_per_slice = 50000
 n_macroparticles = macroparticles_per_slice*n_slices

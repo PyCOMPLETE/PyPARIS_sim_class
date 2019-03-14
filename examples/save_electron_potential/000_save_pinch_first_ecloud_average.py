@@ -7,6 +7,11 @@ import time
 
 import PyPARIS_sim_class.Simulation as sim_mod
 
+n_pinches_to_average = 3
+save_efields = True
+save_rho = True
+transpose_to_natural_ordering_of_xyz = False
+
 def one_pinch(save_rho=True, save_sigmas=False, save_coords=False):
     
     if os.path.exists('simulation_status.sta'):
@@ -62,11 +67,6 @@ def one_pinch(save_rho=True, save_sigmas=False, save_coords=False):
         dd['zg'] = z_centers
 
     return dd
-
-n_pinches_to_average = 10
-save_efields = False
-save_rho = True
-transpose_to_natural_ordering_of_xyz = False
 
 dd = one_pinch(save_rho=save_rho, save_sigmas=True, save_coords=True)
 dd['phi'] /= 1.*n_pinches_to_average

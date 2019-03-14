@@ -1,4 +1,6 @@
 import sys, os
+sys.path.append('../../../')
+
 import shutil
 import PyECLOUD.myfilemanager as mfm
 import PyECLOUD.mystyle as ms
