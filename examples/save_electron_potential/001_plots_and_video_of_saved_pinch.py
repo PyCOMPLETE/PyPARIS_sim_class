@@ -1,4 +1,6 @@
 import sys, os
+sys.path.append('../../../')
+
 import shutil
 import PyECLOUD.myfilemanager as mfm
 import PyECLOUD.mystyle as ms
@@ -16,9 +18,8 @@ z_single_frame_interactive = 1e-2
 
 # ======================
 
-if gen_movie:
-    folder_movie = 'temp_'+tag+'_frames'
-    os.mkdir(folder_movie)
+folder_movie = 'temp_'+tag+'_frames'
+os.mkdir(folder_movie)
 
 ob = mfm.myloadmat_to_obj('pinch_pic_data.mat')
 
