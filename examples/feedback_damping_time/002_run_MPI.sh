@@ -2,6 +2,8 @@
 
 export PYTHONPATH=$PYTHONPATH:../../../
 
+rm simulation_status.sta
+
 # Run MPI
 for i in 1 2 3
 do
