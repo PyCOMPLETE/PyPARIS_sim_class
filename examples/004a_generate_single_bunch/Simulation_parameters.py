@@ -41,6 +41,8 @@ if enable_transverse_damper: n_non_parallelizable += 1
 # Beam Parameters #
 ###################
 
+bunch_from_file = None
+
 intensity = 1.2e+11
 
 epsn_x = 2.5e-6
