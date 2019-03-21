@@ -14,6 +14,7 @@ from PyHEADTAIL.particles.slicing import UniformBinSlicer
 class Simulation(object):
     def __init__(self):
         self.N_turns = pp.N_turns
+        self.pp = pp
 
     def init_all(self):
 
@@ -482,15 +483,19 @@ class DummyComm(object):
     def Barrier(self):
         pass
 
-def get_sim_instance(N_cores_pretend, id_pretend):
+def get_sim_instance(N_cores_pretend, id_pretend, 
+        init_sim_objects_auto=True):
+
     from PyPARIS.ring_of_CPUs import RingOfCPUs
     myCPUring = RingOfCPUs(Simulation(),
-            comm=DummyComm(N_cores_pretend, id_pretend))
+            comm=DummyComm(N_cores_pretend, id_pretend), 
+                init_sim_objects_auto=init_sim_objects_auto)
     return myCPUring.sim_content
 
-def get_serial_CPUring():
+def get_serial_CPUring(init_sim_objects_auto=True):
     from PyPARIS.ring_of_CPUs import RingOfCPUs
-    myCPUring = RingOfCPUs(Simulation(), force_serial=True)
+    myCPUring = RingOfCPUs(Simulation(), force_serial=True, 
+                init_sim_objects_auto=init_sim_objects_auto)
     return myCPUring
 
     
