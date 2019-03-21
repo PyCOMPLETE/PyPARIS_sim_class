@@ -26,13 +26,13 @@ Q_y = 60.295
 Qp_x = 0.
 Qp_y = 0.
 
-octupole_knob = 0.
+octupole_knob = 2.
 
 n_non_parallelizable = 2 #rf and aperture
 
 # Transverse Damper Settings
-enable_transverse_damper = True 
-dampingrate_x = 50. 
+enable_transverse_damper = False
+dampingrate_x = 200. 
 dampingrate_y = 100.
 if enable_transverse_damper: n_non_parallelizable += 1
 
@@ -40,6 +40,8 @@ if enable_transverse_damper: n_non_parallelizable += 1
 ###################
 # Beam Parameters #
 ###################
+
+bunch_from_file = None
 
 intensity = 1.2e+11
 
@@ -52,7 +54,7 @@ x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 500
+n_slices = 50
 z_cut = 2.5e-9/2*c # For slicing
 macroparticles_per_slice = 100
 n_macroparticles = macroparticles_per_slice*n_slices
@@ -63,8 +65,8 @@ n_macroparticles = macroparticles_per_slice*n_slices
 #################
 
 # 1. Turns
-N_turns = 50 # Per job
-N_turns_target = 150 
+N_turns = 30  # Per job
+N_turns_target = 30  
 # 2. Losses
 sim_stop_frac = 0.9
 # 3. Emittance Growth
@@ -77,8 +79,8 @@ epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
 # Footprint Settings #
 ######################
 
-footprint_mode = False
-n_macroparticles_for_footprint_map = 500000
+footprint_mode = True
+n_macroparticles_for_footprint_map = 5000
 n_macroparticles_for_footprint_track = 5000
 
 
@@ -114,8 +116,8 @@ custom_target_grid_arcs = None
 #     'Dh_target': 7e-5}
 
 # Enable Kicks Different Planes
-enable_kick_x = True
-enable_kick_y = True
+enable_kick_x = False
+enable_kick_y = False
 
 # Dedicated Dipole E-Cloud Settings
 enable_arc_dip = False

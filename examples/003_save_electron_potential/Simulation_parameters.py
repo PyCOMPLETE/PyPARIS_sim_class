@@ -17,7 +17,7 @@ machine_configuration = 'LHC-collision'
 
 # # Use this part for smooth machine
 optics_pickle_file = None
-n_segments = 16
+n_segments = 1
 beta_x =  400.0
 beta_y =  400.0
 Q_x = 62.27
@@ -54,9 +54,9 @@ x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 500
+n_slices = 50
 z_cut = 2.5e-9/2*c # For slicing
-macroparticles_per_slice = 5000
+macroparticles_per_slice = 50000
 n_macroparticles = macroparticles_per_slice*n_slices
 
 
@@ -66,7 +66,7 @@ n_macroparticles = macroparticles_per_slice*n_slices
 
 # 1. Turns
 N_turns = 128 # Per job
-N_turns_target = 20000
+N_turns_target = 128
 # 2. Losses
 sim_stop_frac = 0.9
 # 3. Emittance Growth
@@ -99,37 +99,38 @@ sey = 1.30
 
 # Transverse Multigrid Parameters
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
-N_min_Dh_main = 10.
-Dh_sc_ext = .8e-3
+N_min_Dh_main = -1.0
+Dh_sc_ext = 0.000400
 f_telescope = 0.3
-N_nodes_discard = 5.
-target_size_internal_grid_sigma = 10.
-target_Dh_internal_grid_sigma = 0.2
+N_nodes_discard = 8.0
+target_size_internal_grid_sigma = 10.0
+target_Dh_internal_grid_sigma = -2.0
 custom_target_grid_arcs = None
 
-# # Uncomment for custom grid
-# custom_target_grid_arcs = {
-#     'x_min_target': -3e-3,
-#     'x_max_target': 3e-3,
-#     'y_min_target': -3.1e-3,
-#     'y_max_target': 3.1e-3,
-#     'Dh_target': 7e-5}
+# Uncomment for custom grid
+custom_target_grid_arcs = {
+    'x_min_target': -5.4e-3,
+    'x_max_target': 5.4e-3,
+    'y_min_target': -5.4e-3,
+    'y_max_target': 5.4e-3,
+    'Dh_target': 3.5e-5}
+#    'Dh_target': 2.6e-5}
 
 # Enable Kicks Different Planes
-enable_kick_x = True
-enable_kick_y = True
+enable_kick_x = False
+enable_kick_y = False 
 
 # Dedicated Dipole E-Cloud Settings
-enable_arc_dip = False
+enable_arc_dip = True
 fraction_device_dip = 0.65
 init_unif_edens_flag_dip = 1
 init_unif_edens_dip = 1.000000e+12
 N_MP_ele_init_dip = 500000
 N_mp_max_dip = N_MP_ele_init_dip*4
-B_multip_dip = [8.33] #T
+B_multip_dip = [0.] #T
 
 # Dedicated Quadrupole E-Cloud Settings
-enable_arc_quad = True
+enable_arc_quad = False
 fraction_device_quad = 26.000000e-02 #7.000000e-02
 N_mp_max_quad = 2000000 
 B_multip_quad = [0., 188.2] #T

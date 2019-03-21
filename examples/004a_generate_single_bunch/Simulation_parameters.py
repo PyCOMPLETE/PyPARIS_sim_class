@@ -26,13 +26,13 @@ Q_y = 60.295
 Qp_x = 0.
 Qp_y = 0.
 
-octupole_knob = 2.
+octupole_knob = 0.
 
 n_non_parallelizable = 2 #rf and aperture
 
 # Transverse Damper Settings
 enable_transverse_damper = False
-dampingrate_x = 200. 
+dampingrate_x = 100.
 dampingrate_y = 100.
 if enable_transverse_damper: n_non_parallelizable += 1
 
@@ -40,6 +40,8 @@ if enable_transverse_damper: n_non_parallelizable += 1
 ###################
 # Beam Parameters #
 ###################
+
+bunch_from_file = None
 
 intensity = 1.2e+11
 
@@ -52,9 +54,9 @@ x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 50
+n_slices = 500
 z_cut = 2.5e-9/2*c # For slicing
-macroparticles_per_slice = 100
+macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
 
 
@@ -63,8 +65,8 @@ n_macroparticles = macroparticles_per_slice*n_slices
 #################
 
 # 1. Turns
-N_turns = 30  # Per job
-N_turns_target = 30  
+N_turns = 128 # Per job
+N_turns_target = 20000
 # 2. Losses
 sim_stop_frac = 0.9
 # 3. Emittance Growth
@@ -77,8 +79,8 @@ epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
 # Footprint Settings #
 ######################
 
-footprint_mode = True
-n_macroparticles_for_footprint_map = 5000
+footprint_mode = False
+n_macroparticles_for_footprint_map = 500000
 n_macroparticles_for_footprint_track = 5000
 
 
@@ -114,8 +116,8 @@ custom_target_grid_arcs = None
 #     'Dh_target': 7e-5}
 
 # Enable Kicks Different Planes
-enable_kick_x = False
-enable_kick_y = False
+enable_kick_x = True
+enable_kick_y = True
 
 # Dedicated Dipole E-Cloud Settings
 enable_arc_dip = False
@@ -127,7 +129,7 @@ N_mp_max_dip = N_MP_ele_init_dip*4
 B_multip_dip = [8.33] #T
 
 # Dedicated Quadrupole E-Cloud Settings
-enable_arc_quad = False 
+enable_arc_quad = True
 fraction_device_quad = 26.000000e-02 #7.000000e-02
 N_mp_max_quad = 2000000 
 B_multip_quad = [0., 188.2] #T
@@ -136,7 +138,7 @@ filename_state = 'combined_distribution_sey%.2f_%.1fe11ppb_7tev.mat'%(sey,intens
 filename_init_MP_state_quad = folder_path + filename_state
 
 # Dedicated Kick Element Settings
-enable_eclouds_at_kick_elements = False 
+enable_eclouds_at_kick_elements = False
 path_buildup_simulations_kick_elements = '/home/kparasch/workspace/Triplets/ec_headtail_triplets/simulations_PyECLOUD/!!!NAME!!!_sey1.35'
 name_MP_state_file_kick_elements = 'MP_state_9.mat'
 orbit_factor = 6.250000e-01

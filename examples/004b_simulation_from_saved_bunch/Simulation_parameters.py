@@ -17,7 +17,7 @@ machine_configuration = 'LHC-collision'
 
 # # Use this part for smooth machine
 optics_pickle_file = None
-n_segments = 1
+n_segments = 16
 beta_x =  400.0
 beta_y =  400.0
 Q_x = 62.27
@@ -41,6 +41,8 @@ if enable_transverse_damper: n_non_parallelizable += 1
 # Beam Parameters #
 ###################
 
+bunch_from_file = '../004a_generate_single_bunch/generated_bunch.h5'
+
 intensity = 1.2e+11
 
 epsn_x = 2.5e-6
@@ -52,9 +54,9 @@ x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 50
+n_slices = 500
 z_cut = 2.5e-9/2*c # For slicing
-macroparticles_per_slice = 50000
+macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
 
 
@@ -64,7 +66,7 @@ n_macroparticles = macroparticles_per_slice*n_slices
 
 # 1. Turns
 N_turns = 128 # Per job
-N_turns_target = 128
+N_turns_target = 20000
 # 2. Losses
 sim_stop_frac = 0.9
 # 3. Emittance Growth
@@ -97,35 +99,34 @@ sey = 1.30
 
 # Transverse Multigrid Parameters
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
-N_min_Dh_main = -1.0
-Dh_sc_ext = 0.000400
+N_min_Dh_main = 10.
+Dh_sc_ext = .8e-3
 f_telescope = 0.3
-N_nodes_discard = 8.0
-target_size_internal_grid_sigma = 10.0
-target_Dh_internal_grid_sigma = -2.0
+N_nodes_discard = 5.
+target_size_internal_grid_sigma = 10.
+target_Dh_internal_grid_sigma = 0.2
 custom_target_grid_arcs = None
 
-# Uncomment for custom grid
-custom_target_grid_arcs = {
-    'x_min_target': -5.4e-3,
-    'x_max_target': 5.4e-3,
-    'y_min_target': -5.4e-3,
-    'y_max_target': 5.4e-3,
-    'Dh_target': 3.5e-5}
-#    'Dh_target': 2.6e-5}
+# # Uncomment for custom grid
+# custom_target_grid_arcs = {
+#     'x_min_target': -3e-3,
+#     'x_max_target': 3e-3,
+#     'y_min_target': -3.1e-3,
+#     'y_max_target': 3.1e-3,
+#     'Dh_target': 7e-5}
 
 # Enable Kicks Different Planes
-enable_kick_x = False
-enable_kick_y = False 
+enable_kick_x = True
+enable_kick_y = True
 
 # Dedicated Dipole E-Cloud Settings
-enable_arc_dip = True
+enable_arc_dip = False
 fraction_device_dip = 0.65
 init_unif_edens_flag_dip = 1
 init_unif_edens_dip = 1.000000e+12
 N_MP_ele_init_dip = 500000
 N_mp_max_dip = N_MP_ele_init_dip*4
-B_multip_dip = [0.] #T
+B_multip_dip = [8.33] #T
 
 # Dedicated Quadrupole E-Cloud Settings
 enable_arc_quad = False
