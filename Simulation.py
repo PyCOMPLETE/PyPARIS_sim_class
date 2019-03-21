@@ -316,23 +316,31 @@ class Simulation(object):
                 n_macroparticles=pp.n_macroparticles_for_footprint_track, intensity=pp.intensity, 
                 epsn_x=pp.epsn_x, epsn_y=pp.epsn_y, sigma_z=pp.sigma_z)
         elif SimSt.first_run:
-            self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
-                            n_macroparticles=pp.n_macroparticles, intensity=pp.intensity, 
-                            epsn_x=pp.epsn_x, epsn_y=pp.epsn_y, sigma_z=pp.sigma_z)
-            
-            # compute initial displacements
-            inj_opt = self.machine.transverse_map.get_injection_optics()
-            sigma_x = np.sqrt(inj_opt['beta_x']*pp.epsn_x/self.machine.betagamma)
-            sigma_y = np.sqrt(inj_opt['beta_y']*pp.epsn_y/self.machine.betagamma)
-            x_kick = pp.x_kick_in_sigmas*sigma_x
-            y_kick = pp.y_kick_in_sigmas*sigma_y
-            
-            # apply initial displacement
-            if not pp.footprint_mode:
-                self.bunch.x += x_kick
-                self.bunch.y += y_kick
-            
-            print 'Bunch initialized.'
+
+            if pp.bunch_from_file is not None:
+                print 'Loading bunch from file %s ...'%pp.bunch_from_file
+                with h5py.File(pp.bunch_from_file, 'r') as fid:
+                    self.bunch = self.buffer_to_piece(np.array(fid['bunch']).copy())
+                print 'Bunch loaded from file.\n'
+
+            else:
+                self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
+                                n_macroparticles=pp.n_macroparticles, intensity=pp.intensity, 
+                                epsn_x=pp.epsn_x, epsn_y=pp.epsn_y, sigma_z=pp.sigma_z)
+                
+                # compute initial displacements
+                inj_opt = self.machine.transverse_map.get_injection_optics()
+                sigma_x = np.sqrt(inj_opt['beta_x']*pp.epsn_x/self.machine.betagamma)
+                sigma_y = np.sqrt(inj_opt['beta_y']*pp.epsn_y/self.machine.betagamma)
+                x_kick = pp.x_kick_in_sigmas*sigma_x
+                y_kick = pp.y_kick_in_sigmas*sigma_y
+                
+                # apply initial displacement
+                if not pp.footprint_mode:
+                    self.bunch.x += x_kick
+                    self.bunch.y += y_kick
+                
+                print 'Bunch initialized.'
         else:
             print 'Loading bunch from file...'
             with h5py.File('bunch_status_part%02d.h5'%(SimSt.present_simulation_part-1), 'r') as fid:
