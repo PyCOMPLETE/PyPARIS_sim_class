@@ -32,8 +32,8 @@ class LHC(BasicSynchrotron):
             pp.beta_y         = 93.2 
             pp.D_y            = 0.
 
-            pp.accQ_x         = 62.28
-            pp.accQ_y         = 60.31
+            pp.accQ_x         = 62.27
+            pp.accQ_y         = 60.295
             
             pp.h_RF           = 35640
             pp.V_RF           = 8e6

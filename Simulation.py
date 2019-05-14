@@ -32,12 +32,16 @@ class Simulation(object):
 
         # define the machine
         from LHC_custom import LHC
-        self.machine = LHC(n_segments = pp.n_segments, machine_configuration = pp.machine_configuration,
+        self.machine = LHC(
+                        n_segments=pp.n_segments,
+                        machine_configuration=pp.machine_configuration,
                         beta_x=pp.beta_x, beta_y=pp.beta_y,
                         accQ_x=pp.Q_x, accQ_y=pp.Q_y,
                         Qp_x=pp.Qp_x, Qp_y=pp.Qp_y,
                         octupole_knob=pp.octupole_knob, 
-                        optics_dict=optics)
+                        optics_dict=optics,
+                        V_RF=pp.V_RF
+                        )
         self.n_segments = self.machine.transverse_map.n_segments
         
         # compute sigma
