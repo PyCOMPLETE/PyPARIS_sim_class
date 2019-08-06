@@ -28,6 +28,8 @@ Qp_y = 0.
 
 octupole_knob = 0.
 
+V_RF = 12e6
+
 n_non_parallelizable = 2 #rf and aperture
 
 # Transverse Damper Settings
