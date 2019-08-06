@@ -308,9 +308,13 @@ class Simulation(object):
         if pp.footprint_mode:
             if pp.N_turns!=pp.N_turns_target:
                 raise ValueError('In footprint mode you need to set N_turns_target=N_turns_per_run!')
-        
+       
+        check_for_resubmit = True
+        if hasattr(pp, 'check_for_resubmit'):
+            check_for_resubmit = pp.check_for_resubmit
         import PyPARIS_sim_class.Save_Load_Status as SLS
-        SimSt = SLS.SimulationStatus(N_turns_per_run=pp.N_turns, check_for_resubmit = True, N_turns_target=pp.N_turns_target)
+        SimSt = SLS.SimulationStatus(N_turns_per_run=pp.N_turns, check_for_resubmit=check_for_resubmit,
+                N_turns_target=pp.N_turns_target)
         SimSt.before_simulation()
         self.SimSt = SimSt
 
