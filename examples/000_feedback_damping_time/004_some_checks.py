@@ -42,15 +42,15 @@ if flag_check_damp_time:
     ix_max = np.argmax(ob.mean_x)
     iy_max = np.argmax(ob.mean_y)
 
-    axx.plot(ob.mean_x[ix_max]*np.exp(-(turn_num-ix_max)/tau_damp_x), 
+    axx.plot(ob.mean_x[ix_max]*np.exp(-(turn_num-ix_max)/tau_damp_x),
             linewidth=2, color='red', linestyle='--',
             label=r'Damping time = %.0f turns'%tau_damp_x)
-    axy.plot(ob.mean_y[iy_max]*np.exp(-(turn_num-iy_max)/tau_damp_y), 
+    axy.plot(ob.mean_y[iy_max]*np.exp(-(turn_num-iy_max)/tau_damp_y),
             linewidth=2, color='red', linestyle='--',
             label=r'Damping time = %.0f turns'%tau_damp_y)
 
-axx.legend(prop={'size':14}).draggable()
-axy.legend(prop={'size':14}).draggable()
+axx.legend(prop={'size':14})
+axy.legend(prop={'size':14})
 
 axx.set_ylabel('x [m]')
 axy.set_ylabel('y [m]')
