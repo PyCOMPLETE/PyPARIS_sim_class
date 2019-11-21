@@ -130,6 +130,7 @@ class Simulation(object):
                             enable_kick_y = pp.enable_kick_y)
 
 
+                        
         if self.ring_of_CPUs.I_am_the_master and pp.enable_arc_dip:
             with open('multigrid_config_dip.txt', 'w') as fid:
                 if hasattr(ecloud_dip.spacech_ele.PyPICobj, 'grids'):
@@ -155,6 +156,7 @@ class Simulation(object):
                     pickle.dump(ecloud_quad.spacech_ele.PyPICobj.grids, fid)
                 else:
                     pickle.dump('Single grid.', fid)
+                
 
         # setup transverse losses (to "protect" the ecloud)
         import PyHEADTAIL.aperture.aperture as aperture
@@ -303,8 +305,12 @@ class Simulation(object):
             if pp.N_turns!=pp.N_turns_target:
                 raise ValueError('In footprint mode you need to set N_turns_target=N_turns_per_run!')
 
+        check_for_resubmit = True
+        if hasattr(pp, 'check_for_resubmit'):
+            check_for_resubmit = pp.check_for_resubmit
         import PyPARIS_sim_class.Save_Load_Status as SLS
-        SimSt = SLS.SimulationStatus(N_turns_per_run=pp.N_turns, check_for_resubmit = True, N_turns_target=pp.N_turns_target)
+        SimSt = SLS.SimulationStatus(N_turns_per_run=pp.N_turns, check_for_resubmit=check_for_resubmit,
+                N_turns_target=pp.N_turns_target)
         SimSt.before_simulation()
         self.SimSt = SimSt
 
@@ -426,6 +432,7 @@ class Simulation(object):
             for ec in self.my_list_eclouds: ec.finalize_and_reinitialize()
 
 
+        
     def finalize_simulation(self):
         if pp.footprint_mode:
             # Tunes
