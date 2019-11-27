@@ -1,4 +1,4 @@
-import Simulation as sim_mod
+from . import Simulation as sim_mod
 
 N_proc_pretend = 4
 myid_pretend = 2

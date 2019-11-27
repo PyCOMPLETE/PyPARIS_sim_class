@@ -1,5 +1,5 @@
 import numpy as np
-import Simulation as sim_mod
+from . import Simulation as sim_mod
 import time
 
 ring = sim_mod.get_serial_CPUring()
@@ -26,7 +26,7 @@ z_centers = []
 t_start = time.mktime(time.localtime())
 for i_ss, ss in enumerate(list_slice_objects[::-1]):
     if np.mod(i_ss, 20)==0:
-        print("%d / %d"%(i_ss, N_slices))
+        print(("%d / %d"%(i_ss, N_slices)))
     first_ecloud.track(ss)
     if ss.slice_info != 'unsliced':
         z_centers.append(ss.slice_info['z_bin_center'])
@@ -36,7 +36,7 @@ z_centers = z_centers[::-1] # HEADTAIL convention
 
 t_end = time.mktime(time.localtime())
 
-print('Track time %.2f s' % (t_end - t_start))
+print(('Track time %.2f s' % (t_end - t_start)))
 
 # Save pich to file
 import scipy.io as sio
