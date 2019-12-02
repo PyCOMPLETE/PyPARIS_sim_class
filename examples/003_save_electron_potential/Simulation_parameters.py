@@ -118,6 +118,8 @@ custom_target_grid_arcs = {
     'Dh_target': 3.5e-5}
 #    'Dh_target': 2.6e-5}
 
+force_interp_at_substeps_interacting_slices = True
+
 # Enable Kicks Different Planes
 enable_kick_x = False
 enable_kick_y = False 

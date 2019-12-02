@@ -107,7 +107,9 @@ class Simulation(object):
                             nel_mp_ref_0=nel_mp_ref_0,
                             B_multip=pp.B_multip_dip,
                             enable_kick_x = pp.enable_kick_x,
-                            enable_kick_y = pp.enable_kick_y)
+                            enable_kick_y = pp.enable_kick_y,
+                            force_interp_at_substeps_interacting_slices=pp.force_interp_at_substeps_interacting_slices,
+                            )
 
         if pp.enable_arc_quad:
             ecloud_quad = PyEC4PyHT.Ecloud(slice_by_slice_mode=True,
@@ -127,10 +129,11 @@ class Simulation(object):
                             B_multip=pp.B_multip_quad,
                             filename_init_MP_state=pp.filename_init_MP_state_quad,
                             enable_kick_x = pp.enable_kick_x,
-                            enable_kick_y = pp.enable_kick_y)
+                            enable_kick_y = pp.enable_kick_y,
+                            force_interp_at_substeps_interacting_slices=pp.force_interp_at_substeps_interacting_slices,
+                            )
 
 
-                        
         if self.ring_of_CPUs.I_am_the_master and pp.enable_arc_dip:
             with open('multigrid_config_dip.txt', 'w') as fid:
                 if hasattr(ecloud_dip.spacech_ele.PyPICobj, 'grids'):
@@ -240,7 +243,9 @@ class Simulation(object):
                             x_beam_offset=x_beam_offset,
                             y_beam_offset=y_beam_offset,
                             enable_kick_x = pp.enable_kick_x,
-                            enable_kick_y = pp.enable_kick_y)
+                            enable_kick_y = pp.enable_kick_y,
+                            force_interp_at_substeps_interacting_slices=pp.force_interp_at_substeps_interacting_slices,
+                            )
 
                     my_new_part.append(ecloud_ele)
                     self.my_list_eclouds.append(ecloud_ele)
@@ -432,7 +437,7 @@ class Simulation(object):
             for ec in self.my_list_eclouds: ec.finalize_and_reinitialize()
 
 
-        
+
     def finalize_simulation(self):
         if pp.footprint_mode:
             # Tunes
