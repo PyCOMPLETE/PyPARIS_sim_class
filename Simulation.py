@@ -20,33 +20,86 @@ class Simulation(object):
 
         self.n_slices = pp.n_slices
 
-        # read the optics if needed
-        if pp.optics_pickle_file is not None:
-            with open(pp.optics_pickle_file) as fid:
-                optics = pickle.load(fid)
-                self.n_kick_smooth = np.sum(
-                    ["_kick_smooth_" in nn for nn in optics["name"]]
-                )
+        if hasattr(pp, 'machine_class'):
+            if machine_class == 'synchrotron':
+                mode = 'synchrotron'
+            elif machine_class == 'LHC_custom':
+                mode = 'LHC_custom':
+            else:
+                mode = 'custom_machine_class'
+                raise ValueError('Not yet implemented')
         else:
-            optics = None
-            self.n_kick_smooth = pp.n_segments
+            mode = 'LHC_custom'
+            # kept as default for backward compatibility
 
-        # define the machine
-        from .LHC_custom import LHC
 
-        self.machine = LHC(
-            n_segments=pp.n_segments,
-            machine_configuration=pp.machine_configuration,
-            beta_x=pp.beta_x,
-            beta_y=pp.beta_y,
-            accQ_x=pp.Q_x,
-            accQ_y=pp.Q_y,
-            Qp_x=pp.Qp_x,
-            Qp_y=pp.Qp_y,
-            octupole_knob=pp.octupole_knob,
-            optics_dict=optics,
-            V_RF=pp.V_RF,
-        )
+        if mode == 'LHC_custom':
+
+            # read the optics if needed
+            if pp.optics_pickle_file is not None:
+                with open(pp.optics_pickle_file) as fid:
+                    optics = pickle.load(fid)
+                    self.n_kick_smooth = np.sum(
+                        ["_kick_smooth_" in nn for nn in optics["name"]]
+                    )
+            else:
+                optics = None
+                self.n_kick_smooth = pp.n_segments
+
+            # define the machine
+            from .LHC_custom import LHC
+
+            self.machine = LHC(
+                n_segments=pp.n_segments,
+                machine_configuration=pp.machine_configuration,
+                beta_x=pp.beta_x,
+                beta_y=pp.beta_y,
+                accQ_x=pp.Q_x,
+                accQ_y=pp.Q_y,
+                Qp_x=pp.Qp_x,
+                Qp_y=pp.Qp_y,
+                octupole_knob=pp.octupole_knob,
+                optics_dict=optics,
+                V_RF=pp.V_RF,
+            )
+        elif mode == 'synchrotron':
+            from PyHEADTAIL.machines.synchrotron import Synchrotron
+            machine = Synchrotron(
+                optics_mode=pp.optics_mode,
+                charge=pp.charge,
+                mass=pp.mass,
+                p0=pp.p0,
+                circumference=pp.circumference,
+                n_segments=pp.n_segments,
+                name=pp.name,
+                s=pp.s,
+                alpha_x=pp.alpha_x,
+                beta_x=pp.beta_x,
+                D_x=pp.D_x,
+                alpha_y=pp.alpha_y,
+                beta_y=pp.beta_y,
+                D_y=pp.D_y,
+                accQ_x=pp.accQ_x,
+                accQ_y=pp.accQ_y,
+                Qp_x=pp.Qp_x,
+                Qp_y=pp.Qp_y,
+                app_x=pp.app_x,
+                app_y=pp.app_y,
+                app_xy=pp.app_xy,
+                longitudinal_mode=pp.longitudinal_mode,
+                Q_s=pp.Q_s,
+                alpha_mom_compaction=pp.alpha_mom_compaction,
+                h_RF=pp.h_RF,
+                V_RF=pp.V_RF,
+                dphi_RF=pp.dphi_RF,
+                p_increment=pp.p_increment,
+                RF_at=pp.RF_at,
+                wrap_z=pp.wrap_z,
+                other_detuners=pp.other_detuners,
+            )
+        else:
+            raise ValueError('What?!')
+
         self.n_segments = self.machine.transverse_map.n_segments
 
         # compute sigma
