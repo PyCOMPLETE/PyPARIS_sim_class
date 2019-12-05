@@ -19,12 +19,13 @@ class Simulation(object):
     def init_all(self):
 
         self.n_slices = pp.n_slices
+        self.optics_from_pickle = False
 
         if hasattr(pp, 'machine_class'):
-            if machine_class == 'synchrotron':
+            if pp.machine_class == 'Synchrotron':
                 mode = 'synchrotron'
-            elif machine_class == 'LHC_custom':
-                mode = 'LHC_custom':
+            elif pp.machine_class == 'LHC_custom':
+                mode = 'LHC_custom'
             else:
                 mode = 'custom_machine_class'
                 raise ValueError('Not yet implemented')
@@ -42,6 +43,7 @@ class Simulation(object):
                     self.n_kick_smooth = np.sum(
                         ["_kick_smooth_" in nn for nn in optics["name"]]
                     )
+                self.optics_from_pickle = True
             else:
                 optics = None
                 self.n_kick_smooth = pp.n_segments
@@ -64,7 +66,7 @@ class Simulation(object):
             )
         elif mode == 'synchrotron':
             from PyHEADTAIL.machines.synchrotron import Synchrotron
-            machine = Synchrotron(
+            self.machine = Synchrotron(
                 optics_mode=pp.optics_mode,
                 charge=pp.charge,
                 mass=pp.mass,
@@ -107,7 +109,7 @@ class Simulation(object):
         sigma_x_inj = np.sqrt(inj_opt["beta_x"] * pp.epsn_x / self.machine.betagamma)
         sigma_y_inj = np.sqrt(inj_opt["beta_y"] * pp.epsn_y / self.machine.betagamma)
 
-        if pp.optics_pickle_file is None:
+        if not self.optics_from_pickle:
             sigma_x_smooth = sigma_x_inj
             sigma_y_smooth = sigma_y_inj
         else:
@@ -286,7 +288,7 @@ class Simulation(object):
         for ele in self.mypart:
             my_new_part.append(ele)
             if ele in self.machine.transverse_map:
-                if pp.optics_pickle_file is None or "_kick_smooth_" in ele.name1:
+                if not self.optics_from_pickle or "_kick_smooth_" in ele.name1:
                     if pp.enable_arc_dip:
                         ecloud_dip_new = (
                             ecloud_dip.generate_twin_ecloud_with_shared_space_charge()
