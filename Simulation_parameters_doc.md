@@ -57,14 +57,19 @@ The parameter ```n_non_parallelizable``` defines the number of elements at the e
 n_non_parallelizable = 2 #rf and aperture
 ```
 
-## Still to be documented:
+## Transverse feedback
+An ideal bunch-by-bunch transverse feedback can be enabled. The damping rates are defined as the time constant observed on the envelope of the bunch centroid motion in the presence of the feedback alone:
 ```python
 # Transverse Damper Settings
 enable_transverse_damper = False
 dampingrate_x = 100.
 dampingrate_y = 100.
 if enable_transverse_damper: n_non_parallelizable += 1
+```
+The last line adds thee feedback to the list of non-parallelizable elements.
 
+## Still to be documented:
+```python
 
 ###################
 # Beam Parameters #
