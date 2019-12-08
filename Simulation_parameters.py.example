@@ -4,7 +4,7 @@ from scipy.constants import c
 # Machine Settings #
 ####################
 
-machine_configuration = 'LHC-collision'
+machine_configuration = 'HLLHC-injection'
 
 # # Use this part for optics from file
 # # n_segments needs to be None if optics_pickle_file is specified
@@ -17,9 +17,9 @@ machine_configuration = 'LHC-collision'
 
 # # Use this part for smooth machine
 optics_pickle_file = None
-n_segments = 16
-beta_x =  400.0
-beta_y =  400.0
+n_segments = 8
+beta_x =  92.7
+beta_y =  93.2
 Q_x = 62.27
 Q_y = 60.295
 
@@ -28,9 +28,10 @@ Qp_y = 0.
 
 octupole_knob = 0.
 
-V_RF = 12e6
-
 n_non_parallelizable = 2 #rf and aperture
+
+V_RF = 5.000000e+06
+
 
 # Transverse Damper Settings
 enable_transverse_damper = False
@@ -50,13 +51,13 @@ intensity = 1.2e+11
 epsn_x = 2.5e-6
 epsn_y = 2.5e-6
 
-sigma_z = 1.2e-9/4*c
+sigma_z = 9.181144e-02
 
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 500
+n_slices = 200
 z_cut = 2.5e-9/2*c # For slicing
 macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
@@ -95,9 +96,10 @@ chamb_type = 'polyg'
 x_aper = 2.300000e-02
 y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
-Dt_ref = 5e-12
+Dt_ref = 5.000000e-12
 pyecl_input_folder = './pyecloud_config'
 sey = 1.30
+eMPs = 500000
 
 # Transverse Multigrid Parameters
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
@@ -121,7 +123,7 @@ force_interp_at_substeps_interacting_slices = True
 
 # Enable Kicks Different Planes
 enable_kick_x = True
-enable_kick_y = True
+enable_kick_y = False
 
 # Dedicated Dipole E-Cloud Settings
 enable_arc_dip = False
@@ -134,11 +136,11 @@ B_multip_dip = [8.33] #T
 
 # Dedicated Quadrupole E-Cloud Settings
 enable_arc_quad = True
-fraction_device_quad = 26.000000e-02 #7.000000e-02
+fraction_device_quad = 7.000000e-02
 N_mp_max_quad = 2000000 
-B_multip_quad = [0., 188.2] #T
+B_multip_quad = [0., 12.1] #T
 folder_path = '../../LHC_ecloud_distrib_quads/'
-filename_state = 'combined_distribution_sey%.2f_%.1fe11ppb_7tev.mat'%(sey,intensity/1e11)
+filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey, sigma_z/c*1e9,eMPs)
 filename_init_MP_state_quad = folder_path + filename_state
 
 # Dedicated Kick Element Settings

@@ -126,16 +126,16 @@ enable_kick_x = True
 enable_kick_y = False
 
 # Dedicated Dipole E-Cloud Settings
-enable_arc_dip = False
+enable_arc_dip = True
 fraction_device_dip = 0.65
 init_unif_edens_flag_dip = 1
 init_unif_edens_dip = 1.000000e+12
 N_MP_ele_init_dip = 500000
 N_mp_max_dip = N_MP_ele_init_dip*4
-B_multip_dip = [8.33] #T
+B_multip_dip = [0.5] #T
 
 # Dedicated Quadrupole E-Cloud Settings
-enable_arc_quad = True
+enable_arc_quad = False
 fraction_device_quad = 7.000000e-02
 N_mp_max_quad = 2000000 
 B_multip_quad = [0., 12.1] #T
