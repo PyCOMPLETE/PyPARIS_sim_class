@@ -1,5 +1,18 @@
+# The Simulation_parameter.py configuration file
 
-Still to be documented:
+The file Simulation_parameters.py allowd configuring your PyECLOUD-PyHEADTAIL single-bunch simulation.
+In the following we describe its different parts:
+
+## Initial imports
+In the beginning of the file you can import python modules or objects required to configure configurations. In this example we import some constants:
+
+```python
+from scipy.constants import c
+from scipy.constants import m_p
+from scipy.constants import e as qe
+```
+
+## Still to be documented:
 ```python
 from scipy.constants import c
 from scipy.constants import m_p
