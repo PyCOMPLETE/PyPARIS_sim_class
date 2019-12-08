@@ -20,7 +20,7 @@ machine_class = 'Synchrotron'
 This is the recommended way of configuring the simulation
 
 ## Description of the accelerator
-The description of the accelerator is provided by
+The description of the accelerator is provided by providing the following parameters that are required to define a PyHEADTAIL synchrotron. They are individually [described in the PyHEADTAIL documentation](https://giadarol.github.io/PyHEADTAIL/PyHEADTAIL.machines.html#PyHEADTAIL.machines.synchrotron.Synchrotron).
 
 
 ## Still to be documented:
