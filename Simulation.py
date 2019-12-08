@@ -99,6 +99,11 @@ class Simulation(object):
                 wrap_z=pp.wrap_z,
                 other_detuners=pp.other_detuners,
             )
+
+            if pp.optics_mode != 'smooth':
+                raise ValueError('For arbitrary synchrotron only optics_mode="smooth" is implemented')
+
+            self.n_kick_smooth = pp.n_segments
         else:
             raise ValueError('What?!')
 
