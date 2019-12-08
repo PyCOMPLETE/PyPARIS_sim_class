@@ -1,37 +1,46 @@
 from scipy.constants import c
+from scipy.constants import m_p
+from scipy.constants import e as qe
 
 ####################
 # Machine Settings #
 ####################
 
-machine_configuration = 'HLLHC-injection'
+machine_class = 'Synchrotron'
 
-# # Use this part for optics from file
-# # n_segments needs to be None if optics_pickle_file is specified
-# optics_pickle_file = 'lhc2018_25cm_only_triplets_IR15_b1_optics.pkl'
-# n_segments = None
-# beta_x =  None
-# beta_y =  None
-# Q_x = None
-# Q_y = None
-
-# # Use this part for smooth machine
-optics_pickle_file = None
-n_segments = 8
-beta_x =  92.7
-beta_y =  93.2
-Q_x = 62.27
-Q_y = 60.295
-
+optics_mode = 'smooth'
+charge = qe
+mass = m_p
+p0 = 450e9 * qe / c
+circumference = 26658.8832
+n_segments = 16
+name = None
+s = None
+alpha_x = 0.
+beta_x = 92.7
+D_x = 0.
+alpha_y = 0
+beta_y = 93.2
+D_y = 0.
+accQ_x = 62.27
+accQ_y = 60.295
 Qp_x = 0.
 Qp_y = 0.
-
-octupole_knob = 0.
+app_x = 0.
+app_y = 0.
+app_xy = 0.
+longitudinal_mode = 'non-linear'
+Q_s = None
+alpha_mom_compaction = 3.225e-04
+h_RF = 35640
+V_RF = 5e6
+dphi_RF = 0.
+p_increment = 0.
+RF_at = 'end_of_transverse'
+wrap_z = False
+other_detuners = []
 
 n_non_parallelizable = 2 #rf and aperture
-
-V_RF = 5.000000e+06
-
 
 # Transverse Damper Settings
 enable_transverse_damper = False
