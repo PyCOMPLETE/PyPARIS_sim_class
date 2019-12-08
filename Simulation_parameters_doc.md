@@ -66,7 +66,7 @@ dampingrate_x = 100.
 dampingrate_y = 100.
 if enable_transverse_damper: n_non_parallelizable += 1
 ```
-The last line adds thee feedback to the list of non-parallelizable elements.
+The last line adds the feedback to the list of non-parallelizable elements.
 
 ## Still to be documented:
 ```python
