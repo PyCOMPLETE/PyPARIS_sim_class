@@ -21,17 +21,7 @@ This is the recommended way of configuring the simulation
 
 ## Description of the accelerator
 The description of the accelerator is provided by providing the following parameters that are required to define a PyHEADTAIL synchrotron. They are individually described in the [PyHEADTAIL documentation](https://giadarol.github.io/PyHEADTAIL/PyHEADTAIL.machines.html#PyHEADTAIL.machines.synchrotron.Synchrotron).
-
-
-## Still to be documented:
 ```python
-
-####################
-# Machine Settings #
-####################
-
-machine_class = 'Synchrotron'
-
 optics_mode = 'smooth'
 charge = qe
 mass = m_p
@@ -63,6 +53,11 @@ p_increment = 0.
 RF_at = 'end_of_transverse'
 wrap_z = False
 other_detuners = []
+```
+
+## Still to be documented:
+```python
+
 
 n_non_parallelizable = 2 #rf and aperture
 
