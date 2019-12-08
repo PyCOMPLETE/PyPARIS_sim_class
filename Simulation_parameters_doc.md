@@ -1,6 +1,6 @@
 
 Still to be documented:
-```
+```python
 from scipy.constants import c
 from scipy.constants import m_p
 from scipy.constants import e as qe
