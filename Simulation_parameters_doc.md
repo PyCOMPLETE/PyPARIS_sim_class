@@ -12,11 +12,19 @@ from scipy.constants import m_p
 from scipy.constants import e as qe
 ```
 
+## Machine class
+By choosing ```"Synchrotron"``` as machine class it is possible to define all parameters of the ring:
+```python
+machine_class = 'Synchrotron'
+```
+This is the recommended way of configuring the simulation
+
+## Description of the accelerator
+The description of the accelerator is provided by
+
+
 ## Still to be documented:
 ```python
-from scipy.constants import c
-from scipy.constants import m_p
-from scipy.constants import e as qe
 
 ####################
 # Machine Settings #
