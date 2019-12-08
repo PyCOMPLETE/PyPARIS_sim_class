@@ -12,14 +12,11 @@ from scipy.constants import m_p
 from scipy.constants import e as qe
 ```
 
-## Machine class
-By choosing ```"Synchrotron"``` as machine class it is possible to define all parameters of the ring:
+## Description of the accelerator
+By choosing ```"Synchrotron"``` as machine class it is possible to define all parameters of the ring (this is the recommended way of configuring the simulation):
 ```python
 machine_class = 'Synchrotron'
 ```
-This is the recommended way of configuring the simulation
-
-## Description of the accelerator
 The description of the accelerator is provided by providing the following parameters that are required to define a PyHEADTAIL synchrotron. They are individually described in the [PyHEADTAIL documentation](https://giadarol.github.io/PyHEADTAIL/PyHEADTAIL.machines.html#PyHEADTAIL.machines.synchrotron.Synchrotron).
 ```python
 optics_mode = 'smooth'
@@ -50,17 +47,18 @@ h_RF = 35640
 V_RF = 5e6
 dphi_RF = 0.
 p_increment = 0.
-RF_at = 'end_of_transverse'
+RF_at = 'end_of_transverse' # needs to be at the end to be compatible with PyPARIS parallelization
 wrap_z = False
 other_detuners = []
 ```
 
+The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transeverse collimation:
+```python
+n_non_parallelizable = 2 #rf and aperture
+```
+
 ## Still to be documented:
 ```python
-
-
-n_non_parallelizable = 2 #rf and aperture
-
 # Transverse Damper Settings
 enable_transverse_damper = False
 dampingrate_x = 100.
