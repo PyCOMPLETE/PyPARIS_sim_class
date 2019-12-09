@@ -68,8 +68,29 @@ if enable_transverse_damper: n_non_parallelizable += 1
 ```
 The last line adds the feedback to the list of non-parallelizable elements.
 
-## Still to be documented:
+## Beam parameters
+
+The parameters in this section define the bunch.
+
+Optionally the bunch (particle-by-particle coordinates) can be loaded from file using the following intput variable:
 ```python
+bunch_from_file = None
+```
+
+Alternatively, the bunch can be can be defined using the following input
+```python
+intensity = 1.2e+11    # Number of pearticles in the bunch
+
+epsn_x = 2.5e-6        # Normalized horizontal r.m.s emittance [m]
+epsn_y = 2.5e-6        # Normalized vertical r.m.s emittance [m]
+
+sigma_z = 9.181144e-02 # R.m.s bunch length [m]
+```
+The generated bunch is matched in all planes.
+
+
+## Still to be documented:
+
 
 ###################
 # Beam Parameters #
