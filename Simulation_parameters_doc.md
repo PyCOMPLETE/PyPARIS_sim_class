@@ -86,7 +86,7 @@ sigma_z = 9.181144e-02 # R.m.s bunch length [m]
 ```
 The generated bunch is matched in all planes.
 
-An initial transverse displacement can be defined by the following parameter:
+An initial transverse displacement can be defined by the following parameters:
 ```python
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
