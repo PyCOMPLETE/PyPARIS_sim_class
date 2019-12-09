@@ -80,33 +80,21 @@ bunch_from_file = None
 Alternatively, the bunch can be can be defined using the following input
 ```python
 intensity = 1.2e+11    # Number of pearticles in the bunch
-
 epsn_x = 2.5e-6        # Normalized horizontal r.m.s emittance [m]
 epsn_y = 2.5e-6        # Normalized vertical r.m.s emittance [m]
-
 sigma_z = 9.181144e-02 # R.m.s bunch length [m]
 ```
 The generated bunch is matched in all planes.
 
+An initial transverse displacement can be defined by the following parameter:
+```python
+x_kick_in_sigmas = 0.1
+y_kick_in_sigmas = 0.1
+```
 
 ## Still to be documented:
 
-
-###################
-# Beam Parameters #
-###################
-
-bunch_from_file = None
-
-intensity = 1.2e+11
-
-epsn_x = 2.5e-6
-epsn_y = 2.5e-6
-
-sigma_z = 9.181144e-02
-
-x_kick_in_sigmas = 0.1
-y_kick_in_sigmas = 0.1
+```python
 
 # Numerical Parameters
 n_slices = 200
