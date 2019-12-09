@@ -91,6 +91,15 @@ An initial transverse displacement can be defined by the following parameters:
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 ```
+## Slicing
+The beam is sliced longitudinally to compute its interaction with the e-cloud:
+```python
+n_slices = 200
+z_cut = 2.5e-9/2*c # For slicing
+```
+```z_cut``` defined the portion of the bunch that is sliced, which is [-z_cut, z_cut].
+
+
 
 ## Still to be documented:
 
