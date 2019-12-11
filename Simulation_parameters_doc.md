@@ -146,9 +146,18 @@ Most of the e-cloud paramters are defined by PyECLOUD input files in a specified
 ```python
 pyecl_input_folder = './pyecloud_config'
 ```
+Whenever a parameter in the input files is also mention in the present file, the value specified here takes priority.
+
+The chamber geometry can be redefined by the following parameters (see [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) for details):
+
+```python
+chamb_type = 'polyg'
+x_aper = 2.300000e-02
+y_aper = 1.800000e-02
+filename_chm = 'LHC_chm_ver.mat'
+```
 
 ## Still to be documented:
-
 
 ```python
 ####################
