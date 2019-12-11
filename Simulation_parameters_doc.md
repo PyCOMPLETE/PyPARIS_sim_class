@@ -197,6 +197,20 @@ enable_kick_x = True
 enable_kick_y = False
 ```
 
+### Dedicated settings for e-cloud un the dipoles
+
+The following parameters configure the e-cloud in the dipoles (which are simulated starting electrons at rest uniformly distributed in the chamber:
+
+```python
+enable_arc_dip = True               # Activate interaction with e-cloud in the dipoled
+fraction_device_dip = 0.65          # Fraction of the machine circumference occupied by e-cloud in the dipoles
+init_unif_edens_flag_dip = 1        # Activate initial uniform distribution for electrons
+init_unif_edens_dip = 1.0e+12       # Initial electron density (e-/m^3)
+N_MP_ele_init_dip = 500000          # Number of macroparticles
+N_mp_max_dip = N_MP_ele_init_dip*4  # Size of arrazye used to store macroparticle coordinates
+B_multip_dip = [0.5] #T             # Magnetic field (in Tesla)
+```
+
 ## Still to be documented:
 
 ```python
