@@ -105,27 +105,32 @@ The number of macroparticles in the bunch is defined by the following parameters
 macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
 ```
+## Multijob setup
+For very long simulations it is convenient to split the simulations over several shorter jobs. This allows also recovering the simulation  from the end of the last success full jobin case of problems. This is controlled throught eh following parameters:
 
+```python
+N_turns = 128 # Per job
+N_turns_target = 20000 # Entire simulation
+```   
+# Stop criteria:
+The simulation can be ended in case a certain fraction of the initial intensity is lost:
+
+```python
+sim_stop_frac = 0.9 # Simulation stopped if 10% of the initial intensity is lost
+```
+
+Transverse emittance blow-up can also be used a criterion for ending the simulation:
+
+```python
+flag_check_emittance_growth = True
+epsn_x_max_growth_fraction = 0.5 # Stop on 50% horizontal emittance blow-up
+epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
+```
 
 ## Still to be documented:
 
+
 ```python
-
-#################
-# Stop Criteria #  
-#################
-
-# 1. Turns
-N_turns = 128 # Per job
-N_turns_target = 20000
-# 2. Losses
-sim_stop_frac = 0.9
-# 3. Emittance Growth
-flag_check_emittance_growth = True
-epsn_x_max_growth_fraction = 0.5
-epsn_y_max_growth_fraction = epsn_x_max_growth_fraction
-
-
 ######################
 # Footprint Settings #
 ######################
