@@ -163,9 +163,9 @@ The target duration of the electron tracking time sup-steps is defined by:
 Dt_ref = 5.000000e-12
 ```
 
-The Particle-In-Cell solver used to compute beam and electron fields is configured by the following parameters (see [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) for more details):
+The Particle-In-Cell solver used to compute beam and electron fields is configured by the following parameters (more details can be found in the [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) and in the [physcs models section](https://github.com/PyCOMPLETE/PyECLOUD/wiki/Physical-models-and-numerical-algorithms) of the [PyECLOUD wiki](https://github.com/PyCOMPLETE/PyECLOUD/wiki)):
 
-```
+```python
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
 N_min_Dh_main = 10.
 Dh_sc_ext = .8e-3
