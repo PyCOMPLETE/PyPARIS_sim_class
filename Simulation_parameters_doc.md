@@ -52,7 +52,7 @@ wrap_z = False
 other_detuners = []
 ```
 
-The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transeverse collimation:
+The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transeverse collimation):
 ```python
 n_non_parallelizable = 2 #rf and aperture
 ```
