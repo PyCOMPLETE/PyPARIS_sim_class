@@ -138,19 +138,19 @@ n_macroparticles_for_footprint_map = 500000
 n_macroparticles_for_footprint_track = 5000
 ```
 
+
+## Electron cloud settings
+Two kinds of e-cloud interaction can be installed at the end of each machine segment to model the e-cloud in dipoles and quadrupoles.
+
+Most of the e-cloud paramters are defined by PyECLOUD input files in a specified folder:
+```python
+pyecl_input_folder = './pyecloud_config'
+```
+
 ## Still to be documented:
 
 
 ```python
-######################
-# Footprint Settings #
-######################
-
-footprint_mode = False
-n_macroparticles_for_footprint_map = 500000
-n_macroparticles_for_footprint_track = 5000
-
-
 ####################
 # E-Cloud Settings #
 ####################
@@ -161,7 +161,7 @@ x_aper = 2.300000e-02
 y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
 Dt_ref = 5.000000e-12
-pyecl_input_folder = './pyecloud_config'
+
 sey = 1.30
 eMPs = 500000
 
