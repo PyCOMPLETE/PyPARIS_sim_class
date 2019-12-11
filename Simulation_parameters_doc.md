@@ -76,6 +76,7 @@ Optionally the bunch (particle-by-particle coordinates) can be loaded from file 
 ```python
 bunch_from_file = None
 ```
+An example on how to save and load a bunch can be found in PyPARIS_sim_class/examples.
 
 Alternatively, the bunch can be can be defined using the following input
 ```python
@@ -148,7 +149,7 @@ pyecl_input_folder = './pyecloud_config'
 ```
 Whenever a parameter in the input files is also mention in the present file, the value specified here takes priority.
 
-The chamber geometry can be redefined by the following parameters (see [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) for details):
+The chamber geometry can be redefined by the following parameters (see [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) for more details):
 
 ```python
 chamb_type = 'polyg'
@@ -157,21 +158,14 @@ y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
 ```
 
-## Still to be documented:
-
-```python
-####################
-# E-Cloud Settings #
-####################
-
-# General E-Cloud Settings
-chamb_type = 'polyg'
-x_aper = 2.300000e-02
-y_aper = 1.800000e-02
-filename_chm = 'LHC_chm_ver.mat'
+The target duration of the electron tracking time sup-steps is defined by:
+```
 Dt_ref = 5.000000e-12
+```
 
-# Transverse Multigrid Parameters
+The Particle-In-Cell solver used to compute beam and electron fields is configured by the following parameters (see [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) for more details):
+
+```
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
 N_min_Dh_main = 10.
 Dh_sc_ext = .8e-3
@@ -188,6 +182,11 @@ custom_target_grid_arcs = None
 #     'y_min_target': -3.1e-3,
 #     'y_max_target': 3.1e-3,
 #     'Dh_target': 7e-5}
+```
+
+## Still to be documented:
+
+```python
 
 force_interp_at_substeps_interacting_slices = True
 
