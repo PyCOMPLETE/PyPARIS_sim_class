@@ -107,8 +107,6 @@ y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
 Dt_ref = 5.000000e-12
 pyecl_input_folder = './pyecloud_config'
-sey = 1.30
-eMPs = 500000
 
 # Transverse Multigrid Parameters
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
@@ -146,10 +144,12 @@ B_multip_dip = [0.5] #T
 # Dedicated Quadrupole E-Cloud Settings
 enable_arc_quad = False
 fraction_device_quad = 7.000000e-02
-N_mp_max_quad = 2000000 
+N_mp_ele_quad = 500000
+N_mp_max_quad = 2000000
 B_multip_quad = [0., 12.1] #T
 folder_path = '../../LHC_ecloud_distrib_quads/'
-filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey, sigma_z/c*1e9,eMPs)
+sey_load_quad = 1.3
+filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey, sigma_z/c*1e9,N_mp_ele_quad)
 filename_init_MP_state_quad = folder_path + filename_state
 
 # Dedicated Kick Element Settings
