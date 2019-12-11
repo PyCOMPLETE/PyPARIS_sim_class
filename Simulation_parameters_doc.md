@@ -1,6 +1,6 @@
 # The Simulation_parameter.py configuration file
 
-The file Simulation_parameters.py allowd configuring your PyECLOUD-PyHEADTAIL single-bunch simulation.
+The file Simulation_parameters.py allows configuring your PyECLOUD-PyHEADTAIL single-bunch simulation.
 In the following we describe its different parts:
 
 ## Initial imports
