@@ -197,47 +197,47 @@ enable_kick_x = True
 enable_kick_y = False
 ```
 
-### Dedicated settings for e-cloud un the dipoles
+### Dedicated settings for e-cloud un the dipole magnets
 
-The following parameters configure the e-cloud in the dipoles (which are simulated starting electrons at rest uniformly distributed in the chamber:
+The following parameters configure the e-cloud in the dipoles (which are simulated starting with electrons at rest uniformly distributed in the chamber):
 
 ```python
-enable_arc_dip = True               # Activate interaction with e-cloud in the dipoled
+enable_arc_dip = True               # Activate interaction with e-cloud in the dipoles
 fraction_device_dip = 0.65          # Fraction of the machine circumference with e-cloud in the dipoles
 init_unif_edens_flag_dip = 1        # Activate initial uniform distribution for electrons
 init_unif_edens_dip = 1.0e+12       # Initial electron density (e-/m^3)
 N_MP_ele_init_dip = 500000          # Number of macroparticles
-N_mp_max_dip = N_MP_ele_init_dip*4  # Size of arrazye used to store macroparticle coordinates
+N_mp_max_dip = N_MP_ele_init_dip*4  # Size of arrazys used to store macroparticle coordinates
 B_multip_dip = [0.5] #T             # Magnetic field (in Tesla)
 ```
 
-## Still to be documented:
+### Dedicated settings for e-cloud un the quadrupole magnets
+The following parameters configure the e-cloud in the magnets (which are simulated starting with an electron distribution loaded from file):
 
 ```python
+enable_arc_quad = False             # Activate interaction with e-cloud in the dipoled
+fraction_device_quad = 7.0e-02      # Fraction of the machine circumference with e-cloud in the quadrupoles
 
-# Dedicated Dipole E-Cloud Settings
-enable_arc_dip = True
-fraction_device_dip = 0.65
-init_unif_edens_flag_dip = 1
-init_unif_edens_dip = 1.000000e+12
-N_MP_ele_init_dip = 500000
-N_mp_max_dip = N_MP_ele_init_dip*4
-B_multip_dip = [0.5] #T
-
-# Dedicated Quadrupole E-Cloud Settings
-enable_arc_quad = False
-fraction_device_quad = 7.000000e-02
-N_mp_ele_quad = 500000
-N_mp_max_quad = 2000000
-B_multip_quad = [0., 12.1] #T
+N_mp_max_quad = 2000000             # Size of arrazys used to store macroparticle coordinates
+B_multip_quad = [0., 12.1] #T       # The second element of the list is the magnetic field gradient (in Tesla/m)
+```
+The following paramenters are used to define the file containing the initial e-cloud distribution:
+```python
 folder_path = '../../LHC_ecloud_distrib_quads/'
+N_mp_ele_quad = 500000
 sey_load_quad = 1.3
 filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey, sigma_z/c*1e9,N_mp_ele_quad)
 filename_init_MP_state_quad = folder_path + filename_state
+```
 
+### Expert e-cloud kicks
+
+Individual e-cloud interaction can be provided at defined kick locations when the used optics is ```'non-smooth'``` (incompatible with the settings above), suing the following parameters:
+
+```python
 # Dedicated Kick Element Settings
 enable_eclouds_at_kick_elements = False
-path_buildup_simulations_kick_elements = '/home/kparasch/workspace/Triplets/ec_headtail_triplets/simulations_PyECLOUD/!!!NAME!!!_sey1.35'
+path_buildup_simulations_kick_elements = 'path_to_myfolder/simulations_PyECLOUD/!!!NAME!!!_sey1.35'
 name_MP_state_file_kick_elements = 'MP_state_9.mat'
 orbit_factor = 6.250000e-01
 
