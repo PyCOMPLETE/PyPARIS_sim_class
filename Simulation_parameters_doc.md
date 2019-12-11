@@ -184,11 +184,16 @@ custom_target_grid_arcs = None
 #     'Dh_target': 7e-5}
 ```
 
+By setting:
+```python
+force_interp_at_substeps_interacting_slices = True
+```
+the electric field acting on the electrons is re-interpolated at each tracking sub-step. If theis parameter is set to false the field is evaluated only once for each beam-slice.
+
+
 ## Still to be documented:
 
 ```python
-
-force_interp_at_substeps_interacting_slices = True
 
 # Enable Kicks Different Planes
 enable_kick_x = True
