@@ -203,7 +203,7 @@ The following parameters configure the e-cloud in the dipoles (which are simulat
 
 ```python
 enable_arc_dip = True               # Activate interaction with e-cloud in the dipoled
-fraction_device_dip = 0.65          # Fraction of the machine circumference occupied by e-cloud in the dipoles
+fraction_device_dip = 0.65          # Fraction of the machine circumference with e-cloud in the dipoles
 init_unif_edens_flag_dip = 1        # Activate initial uniform distribution for electrons
 init_unif_edens_dip = 1.0e+12       # Initial electron density (e-/m^3)
 N_MP_ele_init_dip = 500000          # Number of macroparticles
