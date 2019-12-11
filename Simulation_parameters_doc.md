@@ -190,14 +190,16 @@ force_interp_at_substeps_interacting_slices = True
 ```
 the electric field acting on the electrons is re-interpolated at each tracking sub-step. If theis parameter is set to false the field is evaluated only once for each beam-slice.
 
+The forces of the e-cloud on the beam particle in the transverse planes can be enabled/disabled using the following flags:
+
+```python
+enable_kick_x = True
+enable_kick_y = False
+```
 
 ## Still to be documented:
 
 ```python
-
-# Enable Kicks Different Planes
-enable_kick_x = True
-enable_kick_y = False
 
 # Dedicated Dipole E-Cloud Settings
 enable_arc_dip = True
