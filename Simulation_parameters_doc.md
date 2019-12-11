@@ -112,7 +112,7 @@ For very long simulations it is convenient to split the simulations over several
 N_turns = 128 # Per job
 N_turns_target = 20000 # Entire simulation
 ```   
-# Stop criteria:
+## Stop criteria
 The simulation can be ended in case a certain fraction of the initial intensity is lost:
 
 ```python
@@ -125,6 +125,17 @@ Transverse emittance blow-up can also be used a criterion for ending the simulat
 flag_check_emittance_growth = True
 epsn_x_max_growth_fraction = 0.5 # Stop on 50% horizontal emittance blow-up
 epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
+```
+
+## Footprint mode
+The simulation mode can be changed to compute the tune footprint in the presence of e-cloud using the ```footprint_mode``` flag. In this case the instability simulation is not performed and only the footprint data is produced. A bunch with a very large number of macroparticles is used to compute the e-cloud filed maps. The footprint particle tunes are measured using a smaller number of macroparticles. For the computation of the footprint the longitudinal motion is automatically switched off.
+
+The footprint mode is enabled and controlled using the following parameters:
+
+```python
+footprint_mode = False
+n_macroparticles_for_footprint_map = 500000
+n_macroparticles_for_footprint_track = 5000
 ```
 
 ## Still to be documented:
