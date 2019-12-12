@@ -149,7 +149,7 @@ N_mp_max_quad = 2000000
 B_multip_quad = [0., 12.1] #T
 folder_path = '../../LHC_ecloud_distrib_quads/'
 sey_load_quad = 1.3
-filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey, sigma_z/c*1e9,N_mp_ele_quad)
+filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey_load_quad, sigma_z/c*1e9,N_mp_ele_quad)
 filename_init_MP_state_quad = folder_path + filename_state
 
 # Dedicated Kick Element Settings
