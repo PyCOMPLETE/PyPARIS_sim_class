@@ -1,34 +1,44 @@
 from scipy.constants import c
+from scipy.constants import m_p
+from scipy.constants import e as qe
 
 ####################
 # Machine Settings #
 ####################
 
-machine_configuration = 'LHC-collision'
+machine_class = 'Synchrotron'
 
-# # Use this part for optics from file
-# # n_segments needs to be None if optics_pickle_file is specified
-# optics_pickle_file = 'lhc2018_25cm_only_triplets_IR15_b1_optics.pkl'
-# n_segments = None
-# beta_x =  None
-# beta_y =  None
-# Q_x = None
-# Q_y = None
-
-# # Use this part for smooth machine
-optics_pickle_file = None
+optics_mode = 'smooth'
+charge = qe
+mass = m_p
+p0 = 450e9 * qe / c
+circumference = 26658.8832
 n_segments = 16
-beta_x =  400.0
-beta_y =  400.0
-Q_x = 62.27
-Q_y = 60.295
-
+name = None
+s = None
+alpha_x = 0.
+beta_x = 92.7
+D_x = 0.
+alpha_y = 0
+beta_y = 93.2
+D_y = 0.
+accQ_x = 62.27
+accQ_y = 60.295
 Qp_x = 0.
 Qp_y = 0.
-
-octupole_knob = 0.
-
-V_RF = 12e6
+app_x = 0.
+app_y = 0.
+app_xy = 0.
+longitudinal_mode = 'non-linear'
+Q_s = None
+alpha_mom_compaction = 3.225e-04
+h_RF = 35640
+V_RF = 5e6
+dphi_RF = 0.
+p_increment = 0.
+RF_at = 'end_of_transverse'
+wrap_z = False
+other_detuners = []
 
 n_non_parallelizable = 2 #rf and aperture
 
@@ -50,13 +60,13 @@ intensity = 1.2e+11
 epsn_x = 2.5e-6
 epsn_y = 2.5e-6
 
-sigma_z = 1.2e-9/4*c
+sigma_z = 9.181144e-02
 
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 
 # Numerical Parameters
-n_slices = 500
+n_slices = 200
 z_cut = 2.5e-9/2*c # For slicing
 macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
@@ -95,9 +105,8 @@ chamb_type = 'polyg'
 x_aper = 2.300000e-02
 y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
-Dt_ref = 5e-12
+Dt_ref = 5.000000e-12
 pyecl_input_folder = './pyecloud_config'
-sey = 1.30
 
 # Transverse Multigrid Parameters
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
@@ -121,24 +130,26 @@ force_interp_at_substeps_interacting_slices = True
 
 # Enable Kicks Different Planes
 enable_kick_x = True
-enable_kick_y = True
+enable_kick_y = False
 
 # Dedicated Dipole E-Cloud Settings
-enable_arc_dip = False
+enable_arc_dip = True
 fraction_device_dip = 0.65
 init_unif_edens_flag_dip = 1
 init_unif_edens_dip = 1.000000e+12
 N_MP_ele_init_dip = 500000
 N_mp_max_dip = N_MP_ele_init_dip*4
-B_multip_dip = [8.33] #T
+B_multip_dip = [0.5] #T
 
 # Dedicated Quadrupole E-Cloud Settings
-enable_arc_quad = True
-fraction_device_quad = 26.000000e-02 #7.000000e-02
-N_mp_max_quad = 2000000 
-B_multip_quad = [0., 188.2] #T
+enable_arc_quad = False
+fraction_device_quad = 7.000000e-02
+N_mp_ele_quad = 500000
+N_mp_max_quad = 2000000
+B_multip_quad = [0., 12.1] #T
 folder_path = '../../LHC_ecloud_distrib_quads/'
-filename_state = 'combined_distribution_sey%.2f_%.1fe11ppb_7tev.mat'%(sey,intensity/1e11)
+sey_load_quad = 1.3
+filename_state = 'combined_distribution_sey_%.2f_sigmat_%.3fns_450Gev_N_mp_%d_symm'%(sey_load_quad, sigma_z/c*1e9,N_mp_ele_quad)
 filename_init_MP_state_quad = folder_path + filename_state
 
 # Dedicated Kick Element Settings
