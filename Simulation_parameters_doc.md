@@ -197,7 +197,7 @@ enable_kick_x = True
 enable_kick_y = False
 ```
 
-### Dedicated settings for e-cloud un the dipole magnets
+### Dedicated settings for e-cloud in the dipole magnets
 
 The following parameters configure the e-cloud in the dipoles (which are simulated starting with electrons at rest uniformly distributed in the chamber):
 
@@ -211,7 +211,7 @@ N_mp_max_dip = N_MP_ele_init_dip*4  # Size of arrazys used to store macroparticl
 B_multip_dip = [0.5] #T             # Magnetic field (in Tesla)
 ```
 
-### Dedicated settings for e-cloud un the quadrupole magnets
+### Dedicated settings for e-cloud in the quadrupole magnets
 The following parameters configure the e-cloud in the quadrupole magnets (which are simulated starting with an electron distribution loaded from file):
 
 ```python
