@@ -4,7 +4,7 @@ The file Simulation_parameters.py allows configuring your PyECLOUD-PyHEADTAIL si
 In the following we describe its different parts:
 
 ## Initial imports
-In the beginning of the file you can import python modules or objects required to configure configurations. In this example we import some constants:
+In the beginning of the file you can import python modules or objects required to configure the simulation. In this example we import some constants:
 
 ```python
 from scipy.constants import c
