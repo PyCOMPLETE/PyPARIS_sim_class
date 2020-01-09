@@ -1,6 +1,6 @@
 # The Simulation_parameter.py configuration file
 
-The file Simulation_parameters.py allowd configuring your PyECLOUD-PyHEADTAIL single-bunch simulation.
+The file Simulation_parameters.py allows configuring your PyECLOUD-PyHEADTAIL single-bunch simulation.
 In the following we describe its different parts:
 
 ## Initial imports
@@ -52,7 +52,7 @@ wrap_z = False
 other_detuners = []
 ```
 
-The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transeverse collimation):
+The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transverse collimation):
 ```python
 n_non_parallelizable = 2 #rf and aperture
 ```
@@ -78,7 +78,7 @@ bunch_from_file = None
 ```
 An example on how to save and load a bunch can be found in PyPARIS_sim_class/examples.
 
-Alternatively, the bunch can be can be defined using the following input
+Alternatively, the bunch can be defined using the following input
 ```python
 intensity = 1.2e+11    # Number of pearticles in the bunch
 epsn_x = 2.5e-6        # Normalized horizontal r.m.s emittance [m]
@@ -98,7 +98,7 @@ The beam is sliced longitudinally to compute its interaction with the e-cloud:
 n_slices = 200
 z_cut = 2.5e-9/2*c # For slicing
 ```
-```z_cut``` defined the portion of the bunch that is sliced, which is [-z_cut, z_cut].
+```z_cut``` defines the portion of the bunch that is sliced, which is [-z_cut, z_cut].
 
 ## Number of macroparticles in the bunch
 The number of macroparticles in the bunch is defined by the following parameters:
@@ -107,7 +107,7 @@ macroparticles_per_slice = 5000
 n_macroparticles = macroparticles_per_slice*n_slices
 ```
 ## Multijob setup
-For very long simulations it is convenient to split the simulations over several shorter jobs. This allows also recovering the simulation  from the end of the last success full jobin case of problems. This is controlled throught eh following parameters:
+For very long simulations it is convenient to split the simulations over several shorter jobs. This allows also recovering the simulation from the end of the last success full job in case of problems. This is controlled through the following parameters:
 
 ```python
 N_turns = 128 # Per job
@@ -120,7 +120,7 @@ The simulation can be ended in case a certain fraction of the initial intensity 
 sim_stop_frac = 0.9 # Simulation stopped if 10% of the initial intensity is lost
 ```
 
-Transverse emittance blow-up can also be used a criterion for ending the simulation:
+Transverse emittance blow-up can also be used as a criterion for ending the simulation:
 
 ```python
 flag_check_emittance_growth = True
@@ -129,7 +129,7 @@ epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
 ```
 
 ## Footprint mode
-The simulation mode can be changed to compute the tune footprint in the presence of e-cloud using the ```footprint_mode``` flag. In this case the instability simulation is not performed and only the footprint data is produced. A bunch with a very large number of macroparticles is used to compute the e-cloud filed maps. The footprint particle tunes are measured using a smaller number of macroparticles. For the computation of the footprint the longitudinal motion is automatically switched off.
+The simulation mode can be changed to compute the tune footprint in the presence of e-cloud using the ```footprint_mode``` flag. In this case the instability simulation is not performed and only the footprint data is produced. A bunch with a very large number of macroparticles is used to compute the e-cloud field maps. The footprint particle tunes are measured using a smaller number of macroparticles. For the computation of the footprint the longitudinal motion is automatically switched off.
 
 The footprint mode is enabled and controlled using the following parameters:
 
@@ -143,7 +143,7 @@ n_macroparticles_for_footprint_track = 5000
 ## Electron cloud settings
 Two kinds of e-cloud interaction can be installed at the end of each machine segment to model the e-cloud in dipoles and quadrupoles.
 
-Most of the e-cloud paramters are defined by PyECLOUD input files in a specified folder:
+Most of the e-cloud parameters are defined by PyECLOUD input files in a specified folder:
 ```python
 pyecl_input_folder = './pyecloud_config'
 ```
@@ -158,12 +158,12 @@ y_aper = 1.800000e-02
 filename_chm = 'LHC_chm_ver.mat'
 ```
 
-The target duration of the electron tracking time sup-steps is defined by:
+The target duration of the electron tracking time sub-steps is defined by:
 ```
 Dt_ref = 5.000000e-12
 ```
 
-The Particle-In-Cell solver used to compute beam and electron fields is configured by the following parameters (more details can be found in the [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) and in the [physcs models section](https://github.com/PyCOMPLETE/PyECLOUD/wiki/Physical-models-and-numerical-algorithms) of the [PyECLOUD wiki](https://github.com/PyCOMPLETE/PyECLOUD/wiki)):
+The Particle-In-Cell solver used to compute beam and electron fields is configured by the following parameters (more details can be found in the [PyECLOUD reference](https://github.com/PyCOMPLETE/PyECLOUD/wiki/reference-manual) and in the [physics models section](https://github.com/PyCOMPLETE/PyECLOUD/wiki/Physical-models-and-numerical-algorithms) of the [PyECLOUD wiki](https://github.com/PyCOMPLETE/PyECLOUD/wiki)):
 
 ```python
 PyPICmode = 'ShortleyWeller_WithTelescopicGrids'
@@ -188,7 +188,7 @@ By setting:
 ```python
 force_interp_at_substeps_interacting_slices = True
 ```
-the electric field acting on the electrons is re-interpolated at each tracking sub-step. If theis parameter is set to false the field is evaluated only once for each beam-slice.
+the electric field acting on the electrons is re-interpolated at each tracking sub-step. If this parameter is set to false the field is evaluated only once for each beam-slice.
 
 The forces of the e-cloud on the beam particle in the transverse planes can be enabled/disabled using the following flags:
 
@@ -212,7 +212,7 @@ B_multip_dip = [0.5] #T             # Magnetic field (in Tesla)
 ```
 
 ### Dedicated settings for e-cloud un the quadrupole magnets
-The following parameters configure the e-cloud in the magnets (which are simulated starting with an electron distribution loaded from file):
+The following parameters configure the e-cloud in the quadrupole magnets (which are simulated starting with an electron distribution loaded from file):
 
 ```python
 enable_arc_quad = False             # Activate interaction with e-cloud in the dipoled
@@ -221,7 +221,7 @@ fraction_device_quad = 7.0e-02      # Fraction of the machine circumference with
 N_mp_max_quad = 2000000             # Size of arrazys used to store macroparticle coordinates
 B_multip_quad = [0., 12.1] #T       # The second element of the list is the magnetic field gradient (in Tesla/m)
 ```
-The following paramenters are used to define the file containing the initial e-cloud distribution:
+The following parameters are used to define the file containing the initial e-cloud distribution:
 ```python
 folder_path = '../../LHC_ecloud_distrib_quads/'
 N_mp_ele_quad = 500000
@@ -232,7 +232,7 @@ filename_init_MP_state_quad = folder_path + filename_state
 
 ### Expert e-cloud kicks
 
-Individual e-cloud interaction can be provided at defined kick locations when the used optics is ```'non-smooth'``` (incompatible with the settings above), suing the following parameters:
+Individual e-cloud interactions can be provided at defined kick locations when the used optics is ```'non-smooth'``` (incompatible with the settings above), using the following parameters:
 
 ```python
 # Dedicated Kick Element Settings
