@@ -8,6 +8,6 @@ rm simulation_status.sta
 for i in 1 2 3
 do
     echo "Run $i"
-    python -m PyPARIS.multiprocexec -n 3 "sim_class=PyPARIS_sim_class.Simulation.Simulation(param_file='Simulation_parameters.py')"
+    python -m PyPARIS.multiprocexec -n 3 "sim_class=PyPARIS_sim_class.Simulation.Simulation(param_file='param_folder/Simulation_parameters.py')"
 done
 
