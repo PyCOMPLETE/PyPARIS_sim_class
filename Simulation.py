@@ -696,40 +696,22 @@ class Simulation(object):
         return piece
 
 
-class DummyComm(object):
-    def __init__(self, N_cores_pretend, pretend_proc_id):
-        self.N_cores_pretend = N_cores_pretend
-        self.pretend_proc_id = pretend_proc_id
-
-    def Get_size(self):
-        return self.N_cores_pretend
-
-    def Get_rank(self):
-        return self.pretend_proc_id
-
-    def Barrier(self):
-        pass
-
 
 def get_sim_instance(N_cores_pretend, id_pretend, init_sim_objects_auto=True):
 
-    from PyPARIS.ring_of_CPUs import RingOfCPUs
+    import PyPARIS.util as pu
+    sim_instance = pu.get_sim_instance(Simulation(), N_cores_pretend, id_pretend,
+        init_sim_objects_auto)
 
-    myCPUring = RingOfCPUs(
-        Simulation(),
-        comm=DummyComm(N_cores_pretend, id_pretend),
-        init_sim_objects_auto=init_sim_objects_auto,
-    )
-    return myCPUring.sim_content
+    return sim_instance
 
 
 def get_serial_CPUring(init_sim_objects_auto=True):
-    from PyPARIS.ring_of_CPUs import RingOfCPUs
 
-    myCPUring = RingOfCPUs(
-        Simulation(), force_serial=True, init_sim_objects_auto=init_sim_objects_auto
-    )
-    return myCPUring
+    import PyPARIS.util as pu
+    ring = pu.get_serial_CPUring(Simulation(), init_sim_objects_auto)
+
+    return ring
 
 
 class ParticleTrajectories(object):
