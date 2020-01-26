@@ -1,5 +1,5 @@
 import os
-import Simulation_parameters as pp
+# import Simulation_parameters as pp
 
 import PyPARIS.communication_helpers as ch
 import numpy as np
@@ -12,11 +12,20 @@ from PyHEADTAIL.particles.slicing import UniformBinSlicer
 
 
 class Simulation(object):
-    def __init__(self):
-        self.N_turns = pp.N_turns
-        self.pp = pp
+    def __init__(self, param_file='./Simulation_parameters.py'):
+
+        import importlib
+        spec = importlib.util.spec_from_file_location('temp.mod',
+            param_file)
+        mod_params =  importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod_params)
+
+        self.N_turns = mod_params.N_turns
+        self.pp = mod_params
 
     def init_all(self):
+
+        pp = self.pp
 
         self.n_slices = pp.n_slices
         self.optics_from_pickle = False
@@ -449,6 +458,8 @@ class Simulation(object):
 
     def init_master(self):
 
+        pp = self.pp
+
         # Manage multi-job operation
         if pp.footprint_mode:
             if pp.N_turns != pp.N_turns_target:
@@ -569,6 +580,8 @@ class Simulation(object):
 
     def finalize_turn_on_master(self, pieces_treated):
 
+        pp = self.pp
+
         # re-merge bunch
         self.bunch = sum(pieces_treated)
 
@@ -619,6 +632,9 @@ class Simulation(object):
                 ec.finalize_and_reinitialize()
 
     def finalize_simulation(self):
+
+        pp = self.pp
+
         if pp.footprint_mode:
             # Tunes
 
