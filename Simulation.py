@@ -9,19 +9,13 @@ import pickle
 import h5py
 
 from PyHEADTAIL.particles.slicing import UniformBinSlicer
-
+from .sim_config_manager import SimConfig
 
 class Simulation(object):
     def __init__(self, param_file='./Simulation_parameters.py'):
 
-        import importlib
-        spec = importlib.util.spec_from_file_location('temp.mod',
-            param_file)
-        mod_params =  importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod_params)
-
-        self.N_turns = mod_params.N_turns
-        self.pp = mod_params
+        self.pp = SimConfig(param_file)
+        self.N_turns = self.pp.N_turns
 
     def init_all(self):
 
