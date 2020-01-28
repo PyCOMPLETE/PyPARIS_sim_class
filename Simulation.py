@@ -12,10 +12,272 @@ from PyHEADTAIL.particles.slicing import UniformBinSlicer
 from .sim_config_manager import SimConfig
 
 class Simulation(object):
+
     def __init__(self, param_file='./Simulation_parameters.py'):
 
         self.pp = SimConfig(param_file)
         self.N_turns = self.pp.N_turns
+
+    def init_all(self):
+
+        pp = self.pp
+        self.n_slices = pp.n_slices
+
+        # Prepare the machine without e-clouds
+        self._build_machine()
+        self._install_aperture()
+        self._install_damper()
+
+        # Split the machine
+        self._split_machine_among_cores()
+
+        # Generate and install e-clouds
+        self._generate_parent_eclouds()
+        self._install_eclouds_in_machine_part()
+
+        # Switch to footprint mode if needed
+        if pp.footprint_mode:
+            self._switch_to_footprint_mode()
+
+    def init_master(self):
+
+        pp = self.pp
+
+        # Manage multi-job operation
+        if pp.footprint_mode:
+            if pp.N_turns != pp.N_turns_target:
+                raise ValueError(
+                    "In footprint mode you need to set N_turns_target=N_turns_per_run!"
+                )
+
+        check_for_resubmit = True
+        if hasattr(pp, "check_for_resubmit"):
+            check_for_resubmit = pp.check_for_resubmit
+        import PyPARIS_sim_class.Save_Load_Status as SLS
+
+        SimSt = SLS.SimulationStatus(
+            N_turns_per_run=pp.N_turns,
+            check_for_resubmit=check_for_resubmit,
+            N_turns_target=pp.N_turns_target,
+        )
+        SimSt.before_simulation()
+        self.SimSt = SimSt
+
+        # generate a bunch
+        if pp.footprint_mode:
+            self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
+                n_macroparticles=pp.n_macroparticles_for_footprint_track,
+                intensity=pp.intensity,
+                epsn_x=pp.epsn_x,
+                epsn_y=pp.epsn_y,
+                sigma_z=pp.sigma_z,
+            )
+        elif SimSt.first_run:
+
+            if pp.bunch_from_file is not None:
+                print("Loading bunch from file %s ..." % pp.bunch_from_file)
+                with h5py.File(pp.bunch_from_file, "r") as fid:
+                    self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
+                print("Bunch loaded from file.\n")
+
+            else:
+                self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
+                    n_macroparticles=pp.n_macroparticles,
+                    intensity=pp.intensity,
+                    epsn_x=pp.epsn_x,
+                    epsn_y=pp.epsn_y,
+                    sigma_z=pp.sigma_z,
+                )
+
+                # compute initial displacements
+                inj_opt = self.machine.transverse_map.get_injection_optics()
+                sigma_x = np.sqrt(
+                    inj_opt["beta_x"] * pp.epsn_x / self.machine.betagamma
+                )
+                sigma_y = np.sqrt(
+                    inj_opt["beta_y"] * pp.epsn_y / self.machine.betagamma
+                )
+                x_kick = pp.x_kick_in_sigmas * sigma_x
+                y_kick = pp.y_kick_in_sigmas * sigma_y
+
+                # apply initial displacement
+                if not pp.footprint_mode:
+                    self.bunch.x += x_kick
+                    self.bunch.y += y_kick
+
+                print("Bunch initialized.")
+        else:
+            print("Loading bunch from file...")
+            with h5py.File(
+                "bunch_status_part%02d.h5" % (SimSt.present_simulation_part - 1), "r"
+            ) as fid:
+                self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
+            print("Bunch loaded from file.")
+
+        # initial slicing
+        self.slicer = UniformBinSlicer(
+            n_slices=pp.n_slices, z_cuts=(-pp.z_cut, pp.z_cut)
+        )
+
+        # define a bunch monitor
+        from PyHEADTAIL.monitors.monitors import BunchMonitor
+
+        self.bunch_monitor = BunchMonitor(
+            "bunch_evolution_%02d" % self.SimSt.present_simulation_part,
+            pp.N_turns,
+            {"Comment": "PyHDTL simulation"},
+            write_buffer_every=3,
+        )
+
+        # define a slice monitor
+        from PyHEADTAIL.monitors.monitors import SliceMonitor
+
+        self.slice_monitor = SliceMonitor(
+            "slice_evolution_%02d" % self.SimSt.present_simulation_part,
+            pp.N_turns,
+            self.slicer,
+            {"Comment": "PyHDTL simulation"},
+            write_buffer_every=3,
+        )
+
+        # slice for the first turn
+        slice_obj_list = self.bunch.extract_slices(self.slicer)
+
+        pieces_to_be_treated = slice_obj_list
+
+        print("N_turns", self.N_turns)
+
+        if pp.footprint_mode:
+            self.recorded_particles = ParticleTrajectories(
+                pp.n_macroparticles_for_footprint_track, self.N_turns
+            )
+
+        return pieces_to_be_treated
+
+    def init_worker(self):
+        pass
+
+    def treat_piece(self, piece):
+        for ele in self.mypart:
+            ele.track(piece)
+
+    def finalize_turn_on_master(self, pieces_treated):
+
+        pp = self.pp
+
+        # re-merge bunch
+        self.bunch = sum(pieces_treated)
+
+        # finalize present turn (with non parallel part, e.g. synchrotron motion)
+        for ele in self.non_parallel_part:
+            ele.track(self.bunch)
+
+        # save results
+        # print '%s Turn %d'%(time.strftime("%d/%m/%Y %H:%M:%S", time.localtime()), i_turn)
+        self.bunch_monitor.dump(self.bunch)
+        self.slice_monitor.dump(self.bunch)
+
+        # prepare next turn (re-slice)
+        new_pieces_to_be_treated = self.bunch.extract_slices(self.slicer)
+
+        # order reset of all clouds
+        orders_to_pass = ["reset_clouds"]
+
+        if pp.footprint_mode:
+            self.recorded_particles.dump(self.bunch)
+
+        # check if simulation has to be stopped
+        # 1. for beam losses
+        if (
+            not pp.footprint_mode
+            and self.bunch.macroparticlenumber < pp.sim_stop_frac * pp.n_macroparticles
+        ):
+            orders_to_pass.append("stop")
+            self.SimSt.check_for_resubmit = False
+            print("Stop simulation due to beam losses.")
+
+        # 2. for the emittance growth
+        if pp.flag_check_emittance_growth:
+            epsn_x_max = (pp.epsn_x) * (1 + pp.epsn_x_max_growth_fraction)
+            epsn_y_max = (pp.epsn_y) * (1 + pp.epsn_y_max_growth_fraction)
+            if not pp.footprint_mode and (
+                self.bunch.epsn_x() > epsn_x_max or self.bunch.epsn_y() > epsn_y_max
+            ):
+                orders_to_pass.append("stop")
+                self.SimSt.check_for_resubmit = False
+                print("Stop simulation due to emittance growth.")
+
+        return orders_to_pass, new_pieces_to_be_treated
+
+    def execute_orders_from_master(self, orders_from_master):
+        if "reset_clouds" in orders_from_master:
+            for ec in self.my_list_eclouds:
+                ec.finalize_and_reinitialize()
+
+    def finalize_simulation(self):
+
+        pp = self.pp
+
+        if pp.footprint_mode:
+            # Tunes
+
+            import NAFFlib
+
+            print("NAFFlib spectral analysis...")
+            qx_i = np.empty_like(self.recorded_particles.x_i[:, 0])
+            qy_i = np.empty_like(self.recorded_particles.x_i[:, 0])
+            for ii in range(len(qx_i)):
+                qx_i[ii] = NAFFlib.get_tune(
+                    self.recorded_particles.x_i[ii]
+                    + 1j * self.recorded_particles.xp_i[ii]
+                )
+                qy_i[ii] = NAFFlib.get_tune(
+                    self.recorded_particles.y_i[ii]
+                    + 1j * self.recorded_particles.yp_i[ii]
+                )
+            print("NAFFlib spectral analysis done.")
+
+            # Save
+            import h5py
+
+            dict_beam_status = {
+                "x_init": np.squeeze(self.recorded_particles.x_i[:, 0]),
+                "xp_init": np.squeeze(self.recorded_particles.xp_i[:, 0]),
+                "y_init": np.squeeze(self.recorded_particles.y_i[:, 0]),
+                "yp_init": np.squeeze(self.recorded_particles.yp_i[:, 0]),
+                "z_init": np.squeeze(self.recorded_particles.z_i[:, 0]),
+                "qx_i": qx_i,
+                "qy_i": qy_i,
+                "x_centroid": np.mean(self.recorded_particles.x_i, axis=1),
+                "y_centroid": np.mean(self.recorded_particles.y_i, axis=1),
+            }
+
+            with h5py.File("footprint.h5", "w") as fid:
+                for kk in list(dict_beam_status.keys()):
+                    fid[kk] = dict_beam_status[kk]
+        else:
+            # save data for multijob operation and launch new job
+            import h5py
+
+            with h5py.File(
+                "bunch_status_part%02d.h5" % (self.SimSt.present_simulation_part), "w"
+            ) as fid:
+                fid["bunch"] = self.piece_to_buffer(self.bunch)
+            if not self.SimSt.first_run:
+                os.system(
+                    "rm bunch_status_part%02d.h5"
+                    % (self.SimSt.present_simulation_part - 1)
+                )
+            self.SimSt.after_simulation()
+
+    def piece_to_buffer(self, piece):
+        buf = ch.beam_2_buffer(piece)
+        return buf
+
+    def buffer_to_piece(self, buf):
+        piece = ch.buffer_2_beam(buf)
+        return piece
+
 
     def _build_machine(self):
 
@@ -481,268 +743,6 @@ class Simulation(object):
         # remove RF
         if self.ring_of_CPUs.I_am_the_master:
             self.non_parallel_part.remove(self.machine.longitudinal_map)
-
-    def init_all(self):
-
-        pp = self.pp
-
-        self.n_slices = pp.n_slices
-
-        self._build_machine()
-
-        self._install_aperture()
-
-        self._install_damper()
-
-        self._split_machine_among_cores()
-
-        self._generate_parent_eclouds()
-        self._install_eclouds_in_machine_part()
-
-        if pp.footprint_mode:
-            self._switch_to_footprint_mode()
-
-
-    def init_master(self):
-
-        pp = self.pp
-
-        # Manage multi-job operation
-        if pp.footprint_mode:
-            if pp.N_turns != pp.N_turns_target:
-                raise ValueError(
-                    "In footprint mode you need to set N_turns_target=N_turns_per_run!"
-                )
-
-        check_for_resubmit = True
-        if hasattr(pp, "check_for_resubmit"):
-            check_for_resubmit = pp.check_for_resubmit
-        import PyPARIS_sim_class.Save_Load_Status as SLS
-
-        SimSt = SLS.SimulationStatus(
-            N_turns_per_run=pp.N_turns,
-            check_for_resubmit=check_for_resubmit,
-            N_turns_target=pp.N_turns_target,
-        )
-        SimSt.before_simulation()
-        self.SimSt = SimSt
-
-        # generate a bunch
-        if pp.footprint_mode:
-            self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
-                n_macroparticles=pp.n_macroparticles_for_footprint_track,
-                intensity=pp.intensity,
-                epsn_x=pp.epsn_x,
-                epsn_y=pp.epsn_y,
-                sigma_z=pp.sigma_z,
-            )
-        elif SimSt.first_run:
-
-            if pp.bunch_from_file is not None:
-                print("Loading bunch from file %s ..." % pp.bunch_from_file)
-                with h5py.File(pp.bunch_from_file, "r") as fid:
-                    self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
-                print("Bunch loaded from file.\n")
-
-            else:
-                self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
-                    n_macroparticles=pp.n_macroparticles,
-                    intensity=pp.intensity,
-                    epsn_x=pp.epsn_x,
-                    epsn_y=pp.epsn_y,
-                    sigma_z=pp.sigma_z,
-                )
-
-                # compute initial displacements
-                inj_opt = self.machine.transverse_map.get_injection_optics()
-                sigma_x = np.sqrt(
-                    inj_opt["beta_x"] * pp.epsn_x / self.machine.betagamma
-                )
-                sigma_y = np.sqrt(
-                    inj_opt["beta_y"] * pp.epsn_y / self.machine.betagamma
-                )
-                x_kick = pp.x_kick_in_sigmas * sigma_x
-                y_kick = pp.y_kick_in_sigmas * sigma_y
-
-                # apply initial displacement
-                if not pp.footprint_mode:
-                    self.bunch.x += x_kick
-                    self.bunch.y += y_kick
-
-                print("Bunch initialized.")
-        else:
-            print("Loading bunch from file...")
-            with h5py.File(
-                "bunch_status_part%02d.h5" % (SimSt.present_simulation_part - 1), "r"
-            ) as fid:
-                self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
-            print("Bunch loaded from file.")
-
-        # initial slicing
-        self.slicer = UniformBinSlicer(
-            n_slices=pp.n_slices, z_cuts=(-pp.z_cut, pp.z_cut)
-        )
-
-        # define a bunch monitor
-        from PyHEADTAIL.monitors.monitors import BunchMonitor
-
-        self.bunch_monitor = BunchMonitor(
-            "bunch_evolution_%02d" % self.SimSt.present_simulation_part,
-            pp.N_turns,
-            {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
-        )
-
-        # define a slice monitor
-        from PyHEADTAIL.monitors.monitors import SliceMonitor
-
-        self.slice_monitor = SliceMonitor(
-            "slice_evolution_%02d" % self.SimSt.present_simulation_part,
-            pp.N_turns,
-            self.slicer,
-            {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
-        )
-
-        # slice for the first turn
-        slice_obj_list = self.bunch.extract_slices(self.slicer)
-
-        pieces_to_be_treated = slice_obj_list
-
-        print("N_turns", self.N_turns)
-
-        if pp.footprint_mode:
-            self.recorded_particles = ParticleTrajectories(
-                pp.n_macroparticles_for_footprint_track, self.N_turns
-            )
-
-        return pieces_to_be_treated
-
-    def init_worker(self):
-        pass
-
-    def treat_piece(self, piece):
-        for ele in self.mypart:
-            ele.track(piece)
-
-    def finalize_turn_on_master(self, pieces_treated):
-
-        pp = self.pp
-
-        # re-merge bunch
-        self.bunch = sum(pieces_treated)
-
-        # finalize present turn (with non parallel part, e.g. synchrotron motion)
-        for ele in self.non_parallel_part:
-            ele.track(self.bunch)
-
-        # save results
-        # print '%s Turn %d'%(time.strftime("%d/%m/%Y %H:%M:%S", time.localtime()), i_turn)
-        self.bunch_monitor.dump(self.bunch)
-        self.slice_monitor.dump(self.bunch)
-
-        # prepare next turn (re-slice)
-        new_pieces_to_be_treated = self.bunch.extract_slices(self.slicer)
-
-        # order reset of all clouds
-        orders_to_pass = ["reset_clouds"]
-
-        if pp.footprint_mode:
-            self.recorded_particles.dump(self.bunch)
-
-        # check if simulation has to be stopped
-        # 1. for beam losses
-        if (
-            not pp.footprint_mode
-            and self.bunch.macroparticlenumber < pp.sim_stop_frac * pp.n_macroparticles
-        ):
-            orders_to_pass.append("stop")
-            self.SimSt.check_for_resubmit = False
-            print("Stop simulation due to beam losses.")
-
-        # 2. for the emittance growth
-        if pp.flag_check_emittance_growth:
-            epsn_x_max = (pp.epsn_x) * (1 + pp.epsn_x_max_growth_fraction)
-            epsn_y_max = (pp.epsn_y) * (1 + pp.epsn_y_max_growth_fraction)
-            if not pp.footprint_mode and (
-                self.bunch.epsn_x() > epsn_x_max or self.bunch.epsn_y() > epsn_y_max
-            ):
-                orders_to_pass.append("stop")
-                self.SimSt.check_for_resubmit = False
-                print("Stop simulation due to emittance growth.")
-
-        return orders_to_pass, new_pieces_to_be_treated
-
-    def execute_orders_from_master(self, orders_from_master):
-        if "reset_clouds" in orders_from_master:
-            for ec in self.my_list_eclouds:
-                ec.finalize_and_reinitialize()
-
-    def finalize_simulation(self):
-
-        pp = self.pp
-
-        if pp.footprint_mode:
-            # Tunes
-
-            import NAFFlib
-
-            print("NAFFlib spectral analysis...")
-            qx_i = np.empty_like(self.recorded_particles.x_i[:, 0])
-            qy_i = np.empty_like(self.recorded_particles.x_i[:, 0])
-            for ii in range(len(qx_i)):
-                qx_i[ii] = NAFFlib.get_tune(
-                    self.recorded_particles.x_i[ii]
-                    + 1j * self.recorded_particles.xp_i[ii]
-                )
-                qy_i[ii] = NAFFlib.get_tune(
-                    self.recorded_particles.y_i[ii]
-                    + 1j * self.recorded_particles.yp_i[ii]
-                )
-            print("NAFFlib spectral analysis done.")
-
-            # Save
-            import h5py
-
-            dict_beam_status = {
-                "x_init": np.squeeze(self.recorded_particles.x_i[:, 0]),
-                "xp_init": np.squeeze(self.recorded_particles.xp_i[:, 0]),
-                "y_init": np.squeeze(self.recorded_particles.y_i[:, 0]),
-                "yp_init": np.squeeze(self.recorded_particles.yp_i[:, 0]),
-                "z_init": np.squeeze(self.recorded_particles.z_i[:, 0]),
-                "qx_i": qx_i,
-                "qy_i": qy_i,
-                "x_centroid": np.mean(self.recorded_particles.x_i, axis=1),
-                "y_centroid": np.mean(self.recorded_particles.y_i, axis=1),
-            }
-
-            with h5py.File("footprint.h5", "w") as fid:
-                for kk in list(dict_beam_status.keys()):
-                    fid[kk] = dict_beam_status[kk]
-        else:
-            # save data for multijob operation and launch new job
-            import h5py
-
-            with h5py.File(
-                "bunch_status_part%02d.h5" % (self.SimSt.present_simulation_part), "w"
-            ) as fid:
-                fid["bunch"] = self.piece_to_buffer(self.bunch)
-            if not self.SimSt.first_run:
-                os.system(
-                    "rm bunch_status_part%02d.h5"
-                    % (self.SimSt.present_simulation_part - 1)
-                )
-            self.SimSt.after_simulation()
-
-    def piece_to_buffer(self, piece):
-        buf = ch.beam_2_buffer(piece)
-        return buf
-
-    def buffer_to_piece(self, buf):
-        piece = ch.buffer_2_beam(buf)
-        return piece
-
-
 
 def get_sim_instance(N_cores_pretend, id_pretend, init_sim_objects_auto=True):
 
