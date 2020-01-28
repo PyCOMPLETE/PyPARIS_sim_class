@@ -17,11 +17,10 @@ class Simulation(object):
         self.pp = SimConfig(param_file)
         self.N_turns = self.pp.N_turns
 
-    def init_all(self):
+    def _build_machine(self):
 
         pp = self.pp
 
-        self.n_slices = pp.n_slices
         self.optics_from_pickle = False
 
         if hasattr(pp, 'machine_class'):
@@ -149,10 +148,20 @@ class Simulation(object):
                     beta_y_smooth * pp.epsn_y / self.machine.betagamma
                 )
 
-        # define MP size
-        nel_mp_ref_0 = (
-            pp.init_unif_edens_dip * 4 * pp.x_aper * pp.y_aper / pp.N_MP_ele_init_dip
-        )
+        self.sigma_x_inj = sigma_x_inj
+        self.sigma_y_inj = sigma_y_inj
+        self.sigma_x_smooth = sigma_x_smooth
+        self.sigma_y_smooth = sigma_y_smooth
+
+
+    def _generate_parent_eclouds(self):
+
+        pp = self.pp
+
+        sigma_x_inj = self.sigma_x_inj
+        sigma_y_inj = self.sigma_y_inj
+        sigma_x_smooth = self.sigma_x_smooth
+        sigma_y_smooth = self.sigma_y_smooth
 
         # prepare e-cloud
         import PyECLOUD.PyEC4PyHT as PyEC4PyHT
@@ -169,7 +178,14 @@ class Simulation(object):
             }
         self.target_grid_arcs = target_grid_arcs
 
+        self.parent_eclouds = []
+
         if pp.enable_arc_dip:
+            # define MP size
+            nel_mp_ref_0 = (
+                pp.init_unif_edens_dip * 4 * pp.x_aper * pp.y_aper
+                / pp.N_MP_ele_init_dip
+            )
             ecloud_dip = PyEC4PyHT.Ecloud(
                 slice_by_slice_mode=True,
                 L_ecloud=self.machine.circumference
@@ -197,6 +213,7 @@ class Simulation(object):
                 enable_kick_y=pp.enable_kick_y,
                 force_interp_at_substeps_interacting_slices=pp.force_interp_at_substeps_interacting_slices,
             )
+            self.parent_eclouds.append(ecloud_dip)
 
         if pp.enable_arc_quad:
             ecloud_quad = PyEC4PyHT.Ecloud(
@@ -225,6 +242,7 @@ class Simulation(object):
                 enable_kick_y=pp.enable_kick_y,
                 force_interp_at_substeps_interacting_slices=pp.force_interp_at_substeps_interacting_slices,
             )
+            self.parent_eclouds.append(ecloud_quad)
 
         if self.ring_of_CPUs.I_am_the_master and pp.enable_arc_dip:
             with open("multigrid_config_dip.txt", "w") as fid:
@@ -252,14 +270,9 @@ class Simulation(object):
                 else:
                     pickle.dump("Single grid.", fid)
 
-        # setup transverse losses (to "protect" the ecloud)
-        import PyHEADTAIL.aperture.aperture as aperture
+    def _install_damper(self):
 
-        apt_xy = aperture.EllipticalApertureXY(
-            x_aper=pp.target_size_internal_grid_sigma * sigma_x_inj,
-            y_aper=pp.target_size_internal_grid_sigma * sigma_y_inj,
-        )
-        self.machine.one_turn_map.append(apt_xy)
+        pp = self.pp
 
         if pp.enable_transverse_damper:
             # setup transverse damper
@@ -270,7 +283,28 @@ class Simulation(object):
             )
             self.machine.one_turn_map.append(damper)
 
-        # We suppose that all the object that cannot be slice parallelized are at the end of the ring
+    def _install_aperture(self):
+
+        pp = self.pp
+
+        sigma_x_inj = self.sigma_x_inj
+        sigma_y_inj = self.sigma_y_inj
+
+        # setup transverse losses (to "protect" the ecloud)
+        import PyHEADTAIL.aperture.aperture as aperture
+
+        apt_xy = aperture.EllipticalApertureXY(
+            x_aper=pp.target_size_internal_grid_sigma * sigma_x_inj,
+            y_aper=pp.target_size_internal_grid_sigma * sigma_y_inj,
+        )
+        self.machine.one_turn_map.append(apt_xy)
+
+    def _split_machine_among_cores(self):
+
+        pp = self.pp
+
+        # We suppose that all the object that cannot
+        # be slice parallelized are at the end of the ring
         i_end_parallel = len(self.machine.one_turn_map) - pp.n_non_parallelizable
 
         # split the machine
@@ -290,6 +324,7 @@ class Simulation(object):
                 % (myid, self.ring_of_CPUs.N_nodes, len(self.mypart))
             )
 
+    def _install_eclouds_in_machine_part(self):
         # install eclouds in my part
         my_new_part = []
         self.my_list_eclouds = []
@@ -297,18 +332,12 @@ class Simulation(object):
             my_new_part.append(ele)
             if ele in self.machine.transverse_map:
                 if not self.optics_from_pickle or "_kick_smooth_" in ele.name1:
-                    if pp.enable_arc_dip:
-                        ecloud_dip_new = (
-                            ecloud_dip.generate_twin_ecloud_with_shared_space_charge()
+                    for ee in self.parent_eclouds:
+                        ecloud_new = (
+                            ee.generate_twin_ecloud_with_shared_space_charge()
                         )
-                        my_new_part.append(ecloud_dip_new)
-                        self.my_list_eclouds.append(ecloud_dip_new)
-                    if pp.enable_arc_quad:
-                        ecloud_quad_new = (
-                            ecloud_quad.generate_twin_ecloud_with_shared_space_charge()
-                        )
-                        my_new_part.append(ecloud_quad_new)
-                        self.my_list_eclouds.append(ecloud_quad_new)
+                        my_new_part.append(ecloud_new)
+                        self.my_list_eclouds.append(ecloud_new)
                 elif (
                     "_kick_element_" in ele.name1 and pp.enable_eclouds_at_kick_elements
                 ):
@@ -388,67 +417,91 @@ class Simulation(object):
 
         self.mypart = my_new_part
 
-        if pp.footprint_mode:
-            print("Proc. %d computing maps" % myid)
-            # generate a bunch
-            bunch_for_map = self.machine.generate_6D_Gaussian_bunch_matched(
-                n_macroparticles=pp.n_macroparticles_for_footprint_map,
-                intensity=pp.intensity,
-                epsn_x=pp.epsn_x,
-                epsn_y=pp.epsn_y,
-                sigma_z=pp.sigma_z,
-            )
+    def _switch_to_footprint_mode(self):
 
-            # Slice the bunch
-            slicer_for_map = UniformBinSlicer(
-                n_slices=pp.n_slices, z_cuts=(-pp.z_cut, pp.z_cut)
-            )
-            slices_list_for_map = bunch_for_map.extract_slices(slicer_for_map)
+        pp = self.pp
 
-            # Track the previous part of the machine
-            for ele in self.machine.one_turn_map[:i_start_part]:
+        print("Proc. %d computing maps" % myid)
+        # generate a bunch
+        bunch_for_map = self.machine.generate_6D_Gaussian_bunch_matched(
+            n_macroparticles=pp.n_macroparticles_for_footprint_map,
+            intensity=pp.intensity,
+            epsn_x=pp.epsn_x,
+            epsn_y=pp.epsn_y,
+            sigma_z=pp.sigma_z,
+        )
+
+        # Slice the bunch
+        slicer_for_map = UniformBinSlicer(
+            n_slices=pp.n_slices, z_cuts=(-pp.z_cut, pp.z_cut)
+        )
+        slices_list_for_map = bunch_for_map.extract_slices(slicer_for_map)
+
+        # Track the previous part of the machine
+        for ele in self.machine.one_turn_map[:i_start_part]:
+            for ss in slices_list_for_map:
+                ele.track(ss)
+
+        # Measure optics, track and replace clouds with maps
+        list_ele_type = []
+        list_meas_beta_x = []
+        list_meas_alpha_x = []
+        list_meas_beta_y = []
+        list_meas_alpha_y = []
+        for ele in self.mypart:
+            list_ele_type.append(str(type(ele)))
+            # Measure optics
+            bbb = sum(slices_list_for_map)
+            list_meas_beta_x.append(bbb.beta_Twiss_x())
+            list_meas_alpha_x.append(bbb.alpha_Twiss_x())
+            list_meas_beta_y.append(bbb.beta_Twiss_y())
+            list_meas_alpha_y.append(bbb.alpha_Twiss_y())
+
+            if ele in self.my_list_eclouds:
+                ele.track_once_and_replace_with_recorded_field_map(
+                    slices_list_for_map
+                )
+            else:
                 for ss in slices_list_for_map:
                     ele.track(ss)
+        print("Proc. %d done with maps" % myid)
 
-            # Measure optics, track and replace clouds with maps
-            list_ele_type = []
-            list_meas_beta_x = []
-            list_meas_alpha_x = []
-            list_meas_beta_y = []
-            list_meas_alpha_y = []
-            for ele in self.mypart:
-                list_ele_type.append(str(type(ele)))
-                # Measure optics
-                bbb = sum(slices_list_for_map)
-                list_meas_beta_x.append(bbb.beta_Twiss_x())
-                list_meas_alpha_x.append(bbb.alpha_Twiss_x())
-                list_meas_beta_y.append(bbb.beta_Twiss_y())
-                list_meas_alpha_y.append(bbb.alpha_Twiss_y())
+        with open("measured_optics_%d.pkl" % myid, "wb") as fid:
+            pickle.dump(
+                {
+                    "ele_type": list_ele_type,
+                    "beta_x": list_meas_beta_x,
+                    "alpha_x": list_meas_alpha_x,
+                    "beta_y": list_meas_beta_y,
+                    "alpha_y": list_meas_alpha_y,
+                },
+                fid,
+            )
 
-                if ele in self.my_list_eclouds:
-                    ele.track_once_and_replace_with_recorded_field_map(
-                        slices_list_for_map
-                    )
-                else:
-                    for ss in slices_list_for_map:
-                        ele.track(ss)
-            print("Proc. %d done with maps" % myid)
+        # remove RF
+        if self.ring_of_CPUs.I_am_the_master:
+            self.non_parallel_part.remove(self.machine.longitudinal_map)
 
-            with open("measured_optics_%d.pkl" % myid, "wb") as fid:
-                pickle.dump(
-                    {
-                        "ele_type": list_ele_type,
-                        "beta_x": list_meas_beta_x,
-                        "alpha_x": list_meas_alpha_x,
-                        "beta_y": list_meas_beta_y,
-                        "alpha_y": list_meas_alpha_y,
-                    },
-                    fid,
-                )
+    def init_all(self):
 
-            # remove RF
-            if self.ring_of_CPUs.I_am_the_master:
-                self.non_parallel_part.remove(self.machine.longitudinal_map)
+        pp = self.pp
+
+        self.n_slices = pp.n_slices
+
+        self._build_machine()
+
+        self._install_aperture()
+
+        self._install_damper()
+
+        self._split_machine_among_cores()
+
+        self._generate_parent_eclouds()
+        self._install_eclouds_in_machine_part()
+
+        if pp.footprint_mode:
+            self._switch_to_footprint_mode()
+
 
     def init_master(self):
 
