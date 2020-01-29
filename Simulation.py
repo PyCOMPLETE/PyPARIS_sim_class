@@ -442,12 +442,12 @@ class Simulation(object):
 
         self.parent_eclouds = []
 
-        if pp.enable_arc_dip:
-            # define MP size
-            nel_mp_ref_0 = (
+        nel_mp_ref_0 = (
                 pp.init_unif_edens_dip * 4 * pp.x_aper * pp.y_aper
                 / pp.N_MP_ele_init_dip
             )
+        if pp.enable_arc_dip:
+            # define MP size
             ecloud_dip = PyEC4PyHT.Ecloud(
                 slice_by_slice_mode=True,
                 L_ecloud=self.machine.circumference
