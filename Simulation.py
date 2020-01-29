@@ -43,7 +43,7 @@ class Simulation(object):
         if pp.footprint_mode:
             self._switch_to_footprint_mode()
 
-    def init_master(self):
+    def init_master(self, generate_bunch=True, prepare_monitors=True):
 
         pp = self.pp
 
@@ -67,87 +67,25 @@ class Simulation(object):
         SimSt.before_simulation()
         self.SimSt = SimSt
 
-        # generate a bunch
-        if pp.footprint_mode:
-            self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
-                n_macroparticles=pp.n_macroparticles_for_footprint_track,
-                intensity=pp.intensity,
-                epsn_x=pp.epsn_x,
-                epsn_y=pp.epsn_y,
-                sigma_z=pp.sigma_z,
-            )
-        elif SimSt.first_run:
+        # generate_bunch
+        if generate_bunch:
+            self._generate_bunch()
 
-            if pp.bunch_from_file is not None:
-                print("Loading bunch from file %s ..." % pp.bunch_from_file)
-                with h5py.File(pp.bunch_from_file, "r") as fid:
-                    self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
-                print("Bunch loaded from file.\n")
-
-            else:
-                self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
-                    n_macroparticles=pp.n_macroparticles,
-                    intensity=pp.intensity,
-                    epsn_x=pp.epsn_x,
-                    epsn_y=pp.epsn_y,
-                    sigma_z=pp.sigma_z,
-                )
-
-                # compute initial displacements
-                inj_opt = self.machine.transverse_map.get_injection_optics()
-                sigma_x = np.sqrt(
-                    inj_opt["beta_x"] * pp.epsn_x / self.machine.betagamma
-                )
-                sigma_y = np.sqrt(
-                    inj_opt["beta_y"] * pp.epsn_y / self.machine.betagamma
-                )
-                x_kick = pp.x_kick_in_sigmas * sigma_x
-                y_kick = pp.y_kick_in_sigmas * sigma_y
-
-                # apply initial displacement
-                if not pp.footprint_mode:
-                    self.bunch.x += x_kick
-                    self.bunch.y += y_kick
-
-                print("Bunch initialized.")
-        else:
-            print("Loading bunch from file...")
-            with h5py.File(
-                "bunch_status_part%02d.h5" % (SimSt.present_simulation_part - 1), "r"
-            ) as fid:
-                self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
-            print("Bunch loaded from file.")
-
-        # initial slicing
+        # Define slicer
         self.slicer = UniformBinSlicer(
             n_slices=pp.n_slices, z_cuts=(-pp.z_cut, pp.z_cut)
         )
 
-        # define a bunch monitor
-        from PyHEADTAIL.monitors.monitors import BunchMonitor
-
-        self.bunch_monitor = BunchMonitor(
-            "bunch_evolution_%02d" % self.SimSt.present_simulation_part,
-            pp.N_turns,
-            {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
-        )
-
-        # define a slice monitor
-        from PyHEADTAIL.monitors.monitors import SliceMonitor
-
-        self.slice_monitor = SliceMonitor(
-            "slice_evolution_%02d" % self.SimSt.present_simulation_part,
-            pp.N_turns,
-            self.slicer,
-            {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
-        )
+        # Prepare monitors
+        if prepare_monitors:
+            self._prepare_monitors()
 
         # slice for the first turn
-        slice_obj_list = self.bunch.extract_slices(self.slicer)
-
-        pieces_to_be_treated = slice_obj_list
+        if generate_bunch:
+            slice_obj_list = self.bunch.extract_slices(self.slicer)
+            pieces_to_be_treated = slice_obj_list
+        else:
+            pieces_to_be_treated = []
 
         print("N_turns", self.N_turns)
 
@@ -747,6 +685,87 @@ class Simulation(object):
         # remove RF
         if self.ring_of_CPUs.I_am_the_master:
             self.non_parallel_part.remove(self.machine.longitudinal_map)
+
+    def _generate_bunch(self):
+
+        pp = self.pp
+
+        # generate a bunch
+        if pp.footprint_mode:
+            self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
+                n_macroparticles=pp.n_macroparticles_for_footprint_track,
+                intensity=pp.intensity,
+                epsn_x=pp.epsn_x,
+                epsn_y=pp.epsn_y,
+                sigma_z=pp.sigma_z,
+            )
+        elif SimSt.first_run:
+
+            if pp.bunch_from_file is not None:
+                print("Loading bunch from file %s ..." % pp.bunch_from_file)
+                with h5py.File(pp.bunch_from_file, "r") as fid:
+                    self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
+                print("Bunch loaded from file.\n")
+
+            else:
+                self.bunch = self.machine.generate_6D_Gaussian_bunch_matched(
+                    n_macroparticles=pp.n_macroparticles,
+                    intensity=pp.intensity,
+                    epsn_x=pp.epsn_x,
+                    epsn_y=pp.epsn_y,
+                    sigma_z=pp.sigma_z,
+                )
+
+                # compute initial displacements
+                inj_opt = self.machine.transverse_map.get_injection_optics()
+                sigma_x = np.sqrt(
+                    inj_opt["beta_x"] * pp.epsn_x / self.machine.betagamma
+                )
+                sigma_y = np.sqrt(
+                    inj_opt["beta_y"] * pp.epsn_y / self.machine.betagamma
+                )
+                x_kick = pp.x_kick_in_sigmas * sigma_x
+                y_kick = pp.y_kick_in_sigmas * sigma_y
+
+                # apply initial displacement
+                if not pp.footprint_mode:
+                    self.bunch.x += x_kick
+                    self.bunch.y += y_kick
+
+                print("Bunch initialized.")
+        else:
+            print("Loading bunch from file...")
+            with h5py.File(
+                "bunch_status_part%02d.h5" % (SimSt.present_simulation_part - 1), "r"
+            ) as fid:
+                self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
+            print("Bunch loaded from file.")
+
+    def _prepare_monitors(self):
+
+        pp = self.pp
+
+        # define a bunch monitor
+        from PyHEADTAIL.monitors.monitors import BunchMonitor
+
+        self.bunch_monitor = BunchMonitor(
+            "bunch_evolution_%02d" % self.SimSt.present_simulation_part,
+            pp.N_turns,
+            {"Comment": "PyHDTL simulation"},
+            write_buffer_every=3,
+        )
+
+        # define a slice monitor
+        from PyHEADTAIL.monitors.monitors import SliceMonitor
+
+        self.slice_monitor = SliceMonitor(
+            "slice_evolution_%02d" % self.SimSt.present_simulation_part,
+            pp.N_turns,
+            self.slicer,
+            {"Comment": "PyHDTL simulation"},
+            write_buffer_every=3,
+        )
+
 
 def get_sim_instance(N_cores_pretend, id_pretend, init_sim_objects_auto=True):
 
