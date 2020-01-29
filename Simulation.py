@@ -18,7 +18,8 @@ class Simulation(object):
         self.pp = SimConfig(param_file)
         self.N_turns = self.pp.N_turns
 
-    def init_all(self):
+    def init_all(self, generate_parent_eclouds=True
+            install_clouds=True):
 
         pp = self.pp
         self.n_slices = pp.n_slices
@@ -32,8 +33,11 @@ class Simulation(object):
         self._split_machine_among_cores()
 
         # Generate and install e-clouds
-        self._generate_parent_eclouds()
-        self._install_eclouds_in_machine_part()
+        if geneera_parent_eclouds:
+            self._generate_parent_eclouds()
+        if install_clouds:
+            assert(generate_parent_eclouds)
+            self._install_eclouds_in_machine_part()
 
         # Switch to footprint mode if needed
         if pp.footprint_mode:
