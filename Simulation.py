@@ -699,7 +699,7 @@ class Simulation(object):
                 epsn_y=pp.epsn_y,
                 sigma_z=pp.sigma_z,
             )
-        elif SimSt.first_run:
+        elif self.SimSt.first_run:
 
             if pp.bunch_from_file is not None:
                 print("Loading bunch from file %s ..." % pp.bunch_from_file)
@@ -736,7 +736,7 @@ class Simulation(object):
         else:
             print("Loading bunch from file...")
             with h5py.File(
-                "bunch_status_part%02d.h5" % (SimSt.present_simulation_part - 1), "r"
+                "bunch_status_part%02d.h5" % (self.SimSt.present_simulation_part - 1), "r"
             ) as fid:
                 self.bunch = self.buffer_to_piece(np.array(fid["bunch"]).copy())
             print("Bunch loaded from file.")
