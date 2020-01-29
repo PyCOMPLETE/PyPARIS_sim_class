@@ -18,7 +18,7 @@ class Simulation(object):
         self.pp = SimConfig(param_file)
         self.N_turns = self.pp.N_turns
 
-    def init_all(self, generate_parent_eclouds=True
+    def init_all(self, generate_parent_eclouds=True,
             install_clouds=True):
 
         pp = self.pp
@@ -33,7 +33,7 @@ class Simulation(object):
         self._split_machine_among_cores()
 
         # Generate and install e-clouds
-        if geneera_parent_eclouds:
+        if generate_parent_eclouds:
             self._generate_parent_eclouds()
         if install_clouds:
             assert(generate_parent_eclouds)
