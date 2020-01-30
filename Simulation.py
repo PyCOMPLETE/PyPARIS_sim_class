@@ -16,12 +16,14 @@ class Simulation(object):
     def __init__(self, param_file='./Simulation_parameters.py'):
 
         self.pp = SimConfig(param_file)
-        self.N_turns = self.pp.N_turns
 
     def init_all(self, generate_parent_eclouds=True,
             install_clouds=True):
 
         pp = self.pp
+
+        self.N_turns = self.pp.N_turns
+
         self.n_slices = pp.n_slices
 
         # Prepare the machine without e-clouds
