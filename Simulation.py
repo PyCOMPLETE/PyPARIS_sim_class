@@ -51,21 +51,8 @@ class Simulation(object):
         if pp.footprint_mode:
             if pp.N_turns != pp.N_turns_target:
                 raise ValueError(
-                    "In footprint mode you need to set N_turns_target=N_turns_per_run!"
-                )
-
-        check_for_resubmit = True
-        if hasattr(pp, "check_for_resubmit"):
-            check_for_resubmit = pp.check_for_resubmit
-        import PyPARIS_sim_class.Save_Load_Status as SLS
-
-        SimSt = SLS.SimulationStatus(
-            N_turns_per_run=pp.N_turns,
-            check_for_resubmit=check_for_resubmit,
-            N_turns_target=pp.N_turns_target,
-        )
-        SimSt.before_simulation()
-        self.SimSt = SimSt
+                    "In footprint mode you need to set N_turns_target=N_turns_per_run!")
+        self._setup_multijob_mode()
 
         # generate_bunch
         if generate_bunch:
@@ -125,29 +112,14 @@ class Simulation(object):
         # order reset of all clouds
         orders_to_pass = ["reset_clouds"]
 
+        # Save particles in case of footprint
         if pp.footprint_mode:
             self.recorded_particles.dump(self.bunch)
 
-        # check if simulation has to be stopped
-        # 1. for beam losses
-        if (
-            not pp.footprint_mode
-            and self.bunch.macroparticlenumber < pp.sim_stop_frac * pp.n_macroparticles
-        ):
+        # Check stop condition
+        if self._check_stop_conditions():
             orders_to_pass.append("stop")
             self.SimSt.check_for_resubmit = False
-            print("Stop simulation due to beam losses.")
-
-        # 2. for the emittance growth
-        if pp.flag_check_emittance_growth:
-            epsn_x_max = (pp.epsn_x) * (1 + pp.epsn_x_max_growth_fraction)
-            epsn_y_max = (pp.epsn_y) * (1 + pp.epsn_y_max_growth_fraction)
-            if not pp.footprint_mode and (
-                self.bunch.epsn_x() > epsn_x_max or self.bunch.epsn_y() > epsn_y_max
-            ):
-                orders_to_pass.append("stop")
-                self.SimSt.check_for_resubmit = False
-                print("Stop simulation due to emittance growth.")
 
         return orders_to_pass, new_pieces_to_be_treated
 
@@ -198,19 +170,8 @@ class Simulation(object):
                 for kk in list(dict_beam_status.keys()):
                     fid[kk] = dict_beam_status[kk]
         else:
-            # save data for multijob operation and launch new job
-            import h5py
-
-            with h5py.File(
-                "bunch_status_part%02d.h5" % (self.SimSt.present_simulation_part), "w"
-            ) as fid:
-                fid["bunch"] = self.piece_to_buffer(self.bunch)
-            if not self.SimSt.first_run:
-                os.system(
-                    "rm bunch_status_part%02d.h5"
-                    % (self.SimSt.present_simulation_part - 1)
-                )
-            self.SimSt.after_simulation()
+            # Finalize multijob info
+            self._finalize_multijob_mode()
 
     def piece_to_buffer(self, piece):
         buf = ch.beam_2_buffer(piece)
@@ -765,6 +726,65 @@ class Simulation(object):
             {"Comment": "PyHDTL simulation"},
             write_buffer_every=3,
         )
+
+    def _setup_multijob_mode(self):
+
+        pp = self.pp
+
+        check_for_resubmit = True
+        if hasattr(pp, "check_for_resubmit"):
+            check_for_resubmit = pp.check_for_resubmit
+        import PyPARIS_sim_class.Save_Load_Status as SLS
+
+        SimSt = SLS.SimulationStatus(
+            N_turns_per_run=pp.N_turns,
+            check_for_resubmit=check_for_resubmit,
+            N_turns_target=pp.N_turns_target,
+        )
+        SimSt.before_simulation()
+        self.SimSt = SimSt
+
+    def _check_stop_conditions(self):
+
+        pp = self.pp
+
+        stop = False
+        # check if simulation has to be stopped
+        # 1. for beam losses
+        if (
+            not pp.footprint_mode
+            and self.bunch.macroparticlenumber < pp.sim_stop_frac * pp.n_macroparticles
+        ):
+            stop = True
+            print("Stop simulation due to beam losses.")
+
+        # 2. for the emittance growth
+        if pp.flag_check_emittance_growth:
+            epsn_x_max = (pp.epsn_x) * (1 + pp.epsn_x_max_growth_fraction)
+            epsn_y_max = (pp.epsn_y) * (1 + pp.epsn_y_max_growth_fraction)
+            if not pp.footprint_mode and (
+                self.bunch.epsn_x() > epsn_x_max or self.bunch.epsn_y() > epsn_y_max
+            ):
+                stop = True
+                print("Stop simulation due to emittance growth.")
+
+        return stop
+
+    def _finalize_multijob_mode(self):
+
+        # save data for multijob operation and launch new job
+        import h5py
+
+        with h5py.File(
+            "bunch_status_part%02d.h5" % (self.SimSt.present_simulation_part), "w"
+        ) as fid:
+            fid["bunch"] = self.piece_to_buffer(self.bunch)
+        if not self.SimSt.first_run:
+            os.system(
+                "rm bunch_status_part%02d.h5"
+                % (self.SimSt.present_simulation_part - 1)
+            )
+        self.SimSt.after_simulation()
 
 
 def get_sim_instance(N_cores_pretend, id_pretend, init_sim_objects_auto=True):
