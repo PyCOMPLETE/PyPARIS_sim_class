@@ -54,9 +54,6 @@ class Simulation(object):
                     "In footprint mode you need to set N_turns_target=N_turns_per_run!")
         self._setup_multijob_mode()
 
-        # generate_bunch
-        if generate_bunch:
-            self._generate_bunch()
 
         # Define slicer
         self.slicer = UniformBinSlicer(
@@ -67,8 +64,9 @@ class Simulation(object):
         if prepare_monitors:
             self._prepare_monitors()
 
-        # slice for the first turn
+        # generate the bunch and slice for the first turn
         if generate_bunch:
+            self._generate_bunch()
             slice_obj_list = self.bunch.extract_slices(self.slicer)
             pieces_to_be_treated = slice_obj_list
         else:
@@ -706,6 +704,11 @@ class Simulation(object):
 
         pp = self.pp
 
+        if hasattr(pp, 'write_buffer_every'):
+            write_buffer_every = pp.write_buffer_every
+        else:
+            write_buffer_every = 3
+
         # define a bunch monitor
         from PyHEADTAIL.monitors.monitors import BunchMonitor
 
@@ -713,7 +716,7 @@ class Simulation(object):
             "bunch_evolution_%02d" % self.SimSt.present_simulation_part,
             pp.N_turns,
             {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
+            write_buffer_every=write_buffer_every,
         )
 
         # define a slice monitor
@@ -724,7 +727,7 @@ class Simulation(object):
             pp.N_turns,
             self.slicer,
             {"Comment": "PyHDTL simulation"},
-            write_buffer_every=3,
+            write_buffer_every=write_buffer_every,
         )
 
     def _setup_multijob_mode(self):
