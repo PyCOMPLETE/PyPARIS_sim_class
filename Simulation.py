@@ -134,7 +134,7 @@ class Simulation(object):
 
         if pp.footprint_mode:
             # Get tunes
-            import .frequency_analysis as fa
+            from . import frequency_analysis as fa
             fa.get_tunes(self.recorded_particles,
                     filename_output='footprint.h5')
 
