@@ -1,3 +1,5 @@
+import numpy as np
+
 import NAFFlib
 
 def get_tunes(recorded_particles, filename_output=None):
