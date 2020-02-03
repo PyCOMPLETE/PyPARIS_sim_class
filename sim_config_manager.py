@@ -36,3 +36,8 @@ class SimConfig(object):
                 pass
 
         self.loaded_files.append(os.path.abspath(param_file))
+
+    def to_pickle(self, fname):
+        import pickle
+        with open(fname, 'wb') as fid:
+            pickle.dump(self, fid)
