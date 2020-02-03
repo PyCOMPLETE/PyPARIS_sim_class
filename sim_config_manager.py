@@ -11,9 +11,12 @@ def _load_module(param_file):
 
 class SimConfig(object):
 
-    def __init__(self, param_file):
+    def __init__(self, param_file,
+        fname_pkl_at_update='./sim_param.pkl'):
 
+        self.fname_pkl_at_update = fname_pkl_at_update
         self.loaded_files = []
+
         self.update(param_file)
 
     def update(self, param_file):
@@ -36,6 +39,9 @@ class SimConfig(object):
                 pass
 
         self.loaded_files.append(os.path.abspath(param_file))
+
+        if self.fname_pkl_at_update is not None:
+            self.to_pickle(fname=self.fname_pkl_at_update)
 
     def to_pickle(self, fname):
         import pickle
