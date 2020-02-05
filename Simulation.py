@@ -646,6 +646,19 @@ class Simulation(object):
                     sigma_z=pp.sigma_z,
                 )
 
+                # Recenter all slices
+                if hasattr(pp, 'recenter_all_slices'):
+                    if pp.recenter_all_slices:
+                        print('Recentering all slices')
+                        temp_slices = self.bunch.get_slices(self.slicer)
+                        for ii in range(temp_slices.n_slices):
+                            ix = temp_slices.particle_indices_of_slice(ii)
+                            if len(ix) > 0:
+                                self.bunch.x[ix] -= np.mean(self.bunch.x[ix])
+                                self.bunch.xp[ix] -= np.mean(self.bunch.xp[ix])
+                                self.bunch.y[ix] -= np.mean(self.bunch.y[ix])
+                                self.bunch.yp[ix] -= np.mean(self.bunch.yp[ix])
+
                 # compute initial displacements
                 inj_opt = self.machine.transverse_map.get_injection_optics()
                 sigma_x = np.sqrt(
