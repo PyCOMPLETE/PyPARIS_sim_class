@@ -446,6 +446,7 @@ class Simulation(object):
         myid = self.ring_of_CPUs.myid
         i_start_part, i_end_part = sharing.my_part(myid)
         self.mypart = self.machine.one_turn_map[i_start_part:i_end_part]
+        self.i_start_part = i_start_part
         if self.ring_of_CPUs.I_am_a_worker:
             print(
                 "I am id=%d/%d (worker) and my part is %d long"
@@ -555,7 +556,7 @@ class Simulation(object):
 
         pp = self.pp
 
-        print("Proc. %d computing maps" % myid)
+        print("Proc. %d computing maps" % self.ring_of_CPUs.myid)
         # generate a bunch
         bunch_for_map = self.machine.generate_6D_Gaussian_bunch_matched(
             n_macroparticles=pp.n_macroparticles_for_footprint_map,
@@ -572,7 +573,7 @@ class Simulation(object):
         slices_list_for_map = bunch_for_map.extract_slices(slicer_for_map)
 
         # Track the previous part of the machine
-        for ele in self.machine.one_turn_map[:i_start_part]:
+        for ele in self.machine.one_turn_map[:self.i_start_part]:
             for ss in slices_list_for_map:
                 ele.track(ss)
 
@@ -598,9 +599,9 @@ class Simulation(object):
             else:
                 for ss in slices_list_for_map:
                     ele.track(ss)
-        print("Proc. %d done with maps" % myid)
+        print("Proc. %d done with maps" % self.ring_of_CPUs.myid)
 
-        with open("measured_optics_%d.pkl" % myid, "wb") as fid:
+        with open("measured_optics_%d.pkl" % self.ring_of_CPUs.myid, "wb") as fid:
             pickle.dump(
                 {
                     "ele_type": list_ele_type,

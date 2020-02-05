@@ -18,4 +18,4 @@ plt.title('Scatter plot should resemble a triangle.')
 print('Saving footprint.png.')
 plt.savefig('footprint.png')
 
-plt.show(False)
+plt.show()

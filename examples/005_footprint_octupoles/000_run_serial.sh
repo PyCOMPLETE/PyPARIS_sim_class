@@ -3,5 +3,4 @@
 export PYTHONPATH=$PYTHONPATH:../../../
 
 # Run Serial
-../../../PyPARIS/serialexec.py sim_class=PyPARIS_sim_class.Simulation.Simulation
-
+python -m PyPARIS.serialexec sim_class=PyPARIS_sim_class.Simulation.Simulation
