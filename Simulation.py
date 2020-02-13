@@ -452,6 +452,7 @@ class Simulation(object):
         myid = self.ring_of_CPUs.myid
         i_start_part, i_end_part = sharing.my_part(myid)
         self.mypart = self.machine.one_turn_map[i_start_part:i_end_part]
+        self.i_start_part = i_start_part
         if self.ring_of_CPUs.I_am_a_worker:
             print(
                 "I am id=%d/%d (worker) and my part is %d long"
@@ -578,7 +579,7 @@ class Simulation(object):
 
         pp = self.pp
 
-        print("Proc. %d computing maps" % myid)
+        print("Proc. %d computing maps" % self.ring_of_CPUs.myid)
         # generate a bunch
         bunch_for_map = self.machine.generate_6D_Gaussian_bunch_matched(
             n_macroparticles=pp.n_macroparticles_for_footprint_map,
@@ -595,7 +596,7 @@ class Simulation(object):
         slices_list_for_map = bunch_for_map.extract_slices(slicer_for_map)
 
         # Track the previous part of the machine
-        for ele in self.machine.one_turn_map[:i_start_part]:
+        for ele in self.machine.one_turn_map[:self.i_start_part]:
             for ss in slices_list_for_map:
                 ele.track(ss)
 
@@ -621,9 +622,9 @@ class Simulation(object):
             else:
                 for ss in slices_list_for_map:
                     ele.track(ss)
-        print("Proc. %d done with maps" % myid)
+        print("Proc. %d done with maps" % self.ring_of_CPUs.myid)
 
-        with open("measured_optics_%d.pkl" % myid, "wb") as fid:
+        with open("measured_optics_%d.pkl" % self.ring_of_CPUs.myid, "wb") as fid:
             pickle.dump(
                 {
                     "ele_type": list_ele_type,
@@ -668,6 +669,19 @@ class Simulation(object):
                     epsn_y=pp.epsn_y,
                     sigma_z=pp.sigma_z,
                 )
+
+                # Recenter all slices
+                if hasattr(pp, 'recenter_all_slices'):
+                    if pp.recenter_all_slices:
+                        print('Recentering all slices')
+                        temp_slices = self.bunch.get_slices(self.slicer)
+                        for ii in range(temp_slices.n_slices):
+                            ix = temp_slices.particle_indices_of_slice(ii)
+                            if len(ix) > 0:
+                                self.bunch.x[ix] -= np.mean(self.bunch.x[ix])
+                                self.bunch.xp[ix] -= np.mean(self.bunch.xp[ix])
+                                self.bunch.y[ix] -= np.mean(self.bunch.y[ix])
+                                self.bunch.yp[ix] -= np.mean(self.bunch.yp[ix])
 
                 # compute initial displacements
                 inj_opt = self.machine.transverse_map.get_injection_optics()
