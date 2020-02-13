@@ -52,10 +52,7 @@ wrap_z = False
 other_detuners = []
 ```
 
-The parameter ```n_non_parallelizable``` defines the number of elements at the end of the ring for which a parallelization over the slices should not be applied. For the typical simulation this is set to two (longitudinal map and transverse collimation):
-```python
-n_non_parallelizable = 2 #rf and aperture
-```
+The parameter ```n_non_parallelizable``` (used in previous versions) is now handled automatically and should not be added to the input file.
 
 ## Transverse feedback
 An ideal bunch-by-bunch transverse feedback can be enabled. The damping rates are defined as the time constant observed on the envelope of the bunch centroid motion in the presence of the feedback alone:
@@ -64,9 +61,7 @@ An ideal bunch-by-bunch transverse feedback can be enabled. The damping rates ar
 enable_transverse_damper = False
 dampingrate_x = 100.
 dampingrate_y = 100.
-if enable_transverse_damper: n_non_parallelizable += 1
 ```
-The last line adds the feedback to the list of non-parallelizable elements.
 
 ## Beam parameters
 
