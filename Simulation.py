@@ -571,7 +571,7 @@ class Simulation(object):
                         frequency=pp.resonator_frequency,
                         Q=pp.resonator_Q)
                 wake_element = wakes.WakeField(slicer_for_wakefields, wake)
-                machine.one_turn_map.append(wake_element)
+                self.machine.one_turn_map.append(wake_element)
                 self.n_non_parallelizable += 1
 
     def _switch_to_footprint_mode(self):
