@@ -111,7 +111,13 @@ For very long simulations it is convenient to split the simulations over several
 ```python
 N_turns = 128 # Per job
 N_turns_target = 20000 # Entire simulation
-```   
+```  
+For clusters using the LSF management system the job can be resubmitted automatically by setting:
+```python
+check_for_resubmit = True
+```
+otherwise the user has to take care of the resubmission of the job.
+
 ## Stop criteria
 The simulation can be ended in case a certain fraction of the initial intensity is lost:
 
