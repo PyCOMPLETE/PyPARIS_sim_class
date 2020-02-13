@@ -12,7 +12,7 @@ import PyECLOUD.mystyle as ms
 
 tag = 'noecloud'
 
-flag_check_damp_time = True
+flag_check_damp_time = False
 tau_damp_x = 50.
 tau_damp_y = 100.
 
@@ -21,7 +21,7 @@ Q_s = np.nan
 
 #ob = mfm.monitorh5_to_obj('bunch_evolution_00.h5')
 ob = mfm.monitorh5list_to_obj(
-        ['bunch_evolution_%02d.h5'%ii for ii in range(3)])
+        ['bunch_evolution_%02d.h5'%ii for ii in range(1)])
 
 
 plt.close('all')
