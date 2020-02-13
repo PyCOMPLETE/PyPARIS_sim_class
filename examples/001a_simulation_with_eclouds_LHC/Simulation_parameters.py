@@ -19,7 +19,7 @@ machine_configuration = 'LHC-collision'
 
 # # Use this part for smooth machine
 optics_pickle_file = None
-n_segments = 3 
+n_segments = 3
 beta_x =  400.0
 beta_y =  400.0
 Q_x = 62.27
@@ -32,14 +32,10 @@ octupole_knob = 0.
 
 V_RF = 12e6
 
-n_non_parallelizable = 2 #rf and aperture
-
 # Transverse Damper Settings
-enable_transverse_damper = False 
-dampingrate_x = 50. 
+enable_transverse_damper = False
+dampingrate_x = 50.
 dampingrate_y = 100.
-if enable_transverse_damper: n_non_parallelizable += 1
-
 
 ###################
 # Beam Parameters #

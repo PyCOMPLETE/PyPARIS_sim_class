@@ -40,14 +40,10 @@ RF_at = 'end_of_transverse'
 wrap_z = False
 other_detuners = []
 
-n_non_parallelizable = 2 #rf and aperture
-
 # Transverse Damper Settings
 enable_transverse_damper = True
 dampingrate_x = 50.
 dampingrate_y = 100.
-if enable_transverse_damper: n_non_parallelizable += 1
-
 
 ###################
 # Beam Parameters #
@@ -78,7 +74,7 @@ n_macroparticles = macroparticles_per_slice*n_slices
 
 # 1. Turns
 N_turns = 50 # Per job
-N_turns_target = 150 
+N_turns_target = 150
 # 2. Losses
 sim_stop_frac = 0.9
 # 3. Emittance Growth

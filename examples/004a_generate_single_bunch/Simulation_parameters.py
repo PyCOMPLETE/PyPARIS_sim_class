@@ -30,14 +30,10 @@ octupole_knob = 0.
 
 V_RF = 12e6
 
-n_non_parallelizable = 2 #rf and aperture
-
 # Transverse Damper Settings
 enable_transverse_damper = False
 dampingrate_x = 100.
 dampingrate_y = 100.
-if enable_transverse_damper: n_non_parallelizable += 1
-
 
 ###################
 # Beam Parameters #
