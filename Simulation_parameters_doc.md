@@ -133,6 +133,14 @@ epsn_x_max_growth_fraction = 0.5 # Stop on 50% horizontal emittance blow-up
 epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
 ```
 
+## Saving settings
+
+The ouput data is buffered and dumped to file at regular intervals. The lenght of such intervals van be specified by setting:
+
+```python
+write_buffer_every = 3
+```
+
 ## Footprint mode
 The simulation mode can be changed to compute the tune footprint in the presence of e-cloud using the ```footprint_mode``` flag. In this case the instability simulation is not performed and only the footprint data is produced. A bunch with a very large number of macroparticles is used to compute the e-cloud field maps. The footprint particle tunes are measured using a smaller number of macroparticles. For the computation of the footprint the longitudinal motion is automatically switched off.
 
