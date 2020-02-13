@@ -87,6 +87,10 @@ An initial transverse displacement can be defined by the following parameters:
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 ```
+The average position and angle of the bunch longitudinal slices can be shifted to zero (to correct for random fluctuations) by setting:
+```python
+recenter_all_slices = True
+```
 ## Longitudinal slicing
 The beam is sliced longitudinally to compute its interaction with the e-cloud:
 ```python
@@ -107,7 +111,13 @@ For very long simulations it is convenient to split the simulations over several
 ```python
 N_turns = 128 # Per job
 N_turns_target = 20000 # Entire simulation
-```   
+```  
+For clusters using the LSF management system the job can be resubmitted automatically by setting:
+```python
+check_for_resubmit = True
+```
+otherwise the user has to take care of the resubmission of the job.
+
 ## Stop criteria
 The simulation can be ended in case a certain fraction of the initial intensity is lost:
 
@@ -121,6 +131,14 @@ Transverse emittance blow-up can also be used as a criterion for ending the simu
 flag_check_emittance_growth = True
 epsn_x_max_growth_fraction = 0.5 # Stop on 50% horizontal emittance blow-up
 epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
+```
+
+## Saving settings
+
+The ouput data is buffered and dumped to file at regular intervals. The lenght of such intervals van be specified by setting:
+
+```python
+write_buffer_every = 3
 ```
 
 ## Footprint mode
@@ -236,5 +254,17 @@ path_buildup_simulations_kick_elements = 'path_to_myfolder/simulations_PyECLOUD/
 name_MP_state_file_kick_elements = 'MP_state_9.mat'
 orbit_factor = 6.250000e-01
 
+```
+
+### Impedance
+
+A simple resonator impedance can be included in the simulation by using the following parameters:
+
+```python
+enable_impedance = True
+resonator_R_shunt = 25e6
+resonator_frequency = 2e9
+resonator_Q = 1.
+n_slices_wake = 500
 ```
 
