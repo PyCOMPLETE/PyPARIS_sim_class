@@ -8,7 +8,7 @@ from matplotlib.ticker import MaxNLocator
 
 import PyPARIS.myfilemanager as mfm
 
-import mystyle as ms
+import PyECLOUD.mystyle as ms
 
 tag = 'noecloud'
 
