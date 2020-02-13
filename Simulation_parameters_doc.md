@@ -242,3 +242,15 @@ orbit_factor = 6.250000e-01
 
 ```
 
+### Impedance
+
+A simple resonator impedance can be included in the simulation by using the following parameters:
+
+```python
+enable_impedance = True
+resonator_R_shunt = 25e6
+resonator_frequency = 2e9
+resonator_Q = 1.
+n_slices_wake = 500
+```
+
