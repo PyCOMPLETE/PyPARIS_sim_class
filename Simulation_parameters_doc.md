@@ -87,6 +87,10 @@ An initial transverse displacement can be defined by the following parameters:
 x_kick_in_sigmas = 0.1
 y_kick_in_sigmas = 0.1
 ```
+The average position and angle of the bunch longitudinal slices can be shifted to zero (to correct for random fluctuations) by setting:
+```python
+recenter_all_slices = True
+```
 ## Longitudinal slicing
 The beam is sliced longitudinally to compute its interaction with the e-cloud:
 ```python
