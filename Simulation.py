@@ -30,6 +30,7 @@ class Simulation(object):
         self._build_machine()
         self._install_aperture()
         self._install_damper()
+        self._install_impedance()
 
         # Split the machine
         self._split_machine_among_cores()
@@ -287,6 +288,8 @@ class Simulation(object):
         self.sigma_x_smooth = sigma_x_smooth
         self.sigma_y_smooth = sigma_y_smooth
 
+        self.n_non_parallelizable = 1 # longitudinal map
+
 
     def _generate_parent_eclouds(self):
 
@@ -416,6 +419,7 @@ class Simulation(object):
                 dampingrate_x=pp.dampingrate_x, dampingrate_y=pp.dampingrate_y
             )
             self.machine.one_turn_map.append(damper)
+            self.n_non_parallelizable += 1
 
     def _install_aperture(self):
 
@@ -432,6 +436,8 @@ class Simulation(object):
             y_aper=pp.target_size_internal_grid_sigma * sigma_y_inj,
         )
         self.machine.one_turn_map.append(apt_xy)
+        self.n_non_parallelizable += 1
+
 
     def _split_machine_among_cores(self):
 
@@ -439,7 +445,7 @@ class Simulation(object):
 
         # We suppose that all the object that cannot
         # be slice parallelized are at the end of the ring
-        i_end_parallel = len(self.machine.one_turn_map) - pp.n_non_parallelizable
+        i_end_parallel = len(self.machine.one_turn_map) - self.n_non_parallelizable
 
         # split the machine
         sharing = shs.ShareSegments(i_end_parallel, self.ring_of_CPUs.N_nodes)
@@ -554,8 +560,19 @@ class Simulation(object):
     def _install_impedance(self):
 
         pp = self.pp
-        if hasattr(pp, 'enable_impedance':
-            RIPRENDI DA QUA
+        if hasattr(pp, 'enable_impedance'):
+            if pp.enable_impedance:
+
+                slicer_for_wakefields = UniformBinSlicer(
+                        pp.n_slices_wake, z_cuts=(-pp.z_cut, pp.z_cut))
+
+                import PyHEADTAIL.impedances.wakes as wakes
+                wake = wakes.CircularResonator(R_shunt=pp.resonator_R_shunt,
+                        frequency=pp.resonator_frequency,
+                        Q=pp.resonator_Q)
+                wake_element = wakes.WakeField(slicer_for_wakefields, wake)
+                machine.one_turn_map.append(wake_element)
+                self.n_non_parallelizable += 1
 
     def _switch_to_footprint_mode(self):
 
