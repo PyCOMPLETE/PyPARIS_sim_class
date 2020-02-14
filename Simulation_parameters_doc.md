@@ -118,6 +118,8 @@ check_for_resubmit = True
 ```
 otherwise the user has to take care of the resubmission of the job.
 
+The information about the multijob run is kept in the file ```simulation_status.sta```. This file needs to be removed to start the simulation from scractch.
+
 ## Stop criteria
 The simulation can be ended in case a certain fraction of the initial intensity is lost:
 
