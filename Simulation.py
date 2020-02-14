@@ -420,6 +420,9 @@ class Simulation(object):
             )
             self.machine.one_turn_map.append(damper)
             self.n_non_parallelizable += 1
+            self.dampers = [damper]
+        else:
+            self.dampers = []
 
     def _install_aperture(self):
 
@@ -437,6 +440,8 @@ class Simulation(object):
         )
         self.machine.one_turn_map.append(apt_xy)
         self.n_non_parallelizable += 1
+        
+        self.apertures = [apt_xy]
 
 
     def _split_machine_among_cores(self):
@@ -574,6 +579,9 @@ class Simulation(object):
                 wake_element = wakes.WakeField(slicer_for_wakefields, wake)
                 self.machine.one_turn_map.append(wake_element)
                 self.n_non_parallelizable += 1
+                self.impedances = [wake_element]
+            else:
+                self.impedances = []
 
     def _switch_to_footprint_mode(self):
 
