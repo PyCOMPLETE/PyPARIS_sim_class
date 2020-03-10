@@ -185,7 +185,10 @@ class Simulation(object):
                 optics = None
                 self.n_kick_smooth = pp.n_segments
 
-            # define the machine
+            if hasattr(pp, 'longitudinal_mode'):
+                longitudinal_mode = pp.longitudinal_mode
+            else:
+                longitudinal_mode = 'non-linear'
             from .LHC_custom import LHC
 
             self.machine = LHC(
@@ -200,6 +203,7 @@ class Simulation(object):
                 octupole_knob=pp.octupole_knob,
                 optics_dict=optics,
                 V_RF=pp.V_RF,
+                longitudinal_mode=longitudinal_mode
             )
         elif mode == 'synchrotron':
             from PyHEADTAIL.machines.synchrotron import Synchrotron
