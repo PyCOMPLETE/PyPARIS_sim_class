@@ -444,7 +444,7 @@ class Simulation(object):
         )
         self.machine.one_turn_map.append(apt_xy)
         self.n_non_parallelizable += 1
-        
+
         self.apertures = [apt_xy]
 
 
@@ -836,6 +836,7 @@ class ParticleTrajectories(object):
         self.y_i = np.empty((n_record, n_turns))
         self.yp_i = np.empty((n_record, n_turns))
         self.z_i = np.empty((n_record, n_turns))
+        self.dp_i = np.empty((n_record, n_turns))
         self.i_turn = 0
 
     def dump(self, bunch):
@@ -845,6 +846,7 @@ class ParticleTrajectories(object):
         x_after = bunch.x
         y_after = bunch.y
         z_after = bunch.z
+        dp_after = bunch.dp
         xp_after = bunch.xp
         yp_after = bunch.yp
 
@@ -854,6 +856,7 @@ class ParticleTrajectories(object):
         x_after = np.take(x_after, indsort)
         y_after = np.take(y_after, indsort)
         z_after = np.take(z_after, indsort)
+        dp_after = np.take(dp_after, indsort)
         xp_after = np.take(xp_after, indsort)
         yp_after = np.take(yp_after, indsort)
 
@@ -862,5 +865,6 @@ class ParticleTrajectories(object):
         self.y_i[:, self.i_turn] = y_after
         self.yp_i[:, self.i_turn] = yp_after
         self.z_i[:, self.i_turn] = z_after
+        self.dp_i[:, self.i_turn] = dp_after
 
         self.i_turn += 1

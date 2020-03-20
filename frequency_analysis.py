@@ -26,6 +26,7 @@ def get_tunes(recorded_particles, filename_output=None):
         "y_init": np.squeeze(recorded_particles.y_i[:, 0]),
         "yp_init": np.squeeze(recorded_particles.yp_i[:, 0]),
         "z_init": np.squeeze(recorded_particles.z_i[:, 0]),
+        "dp_init": np.squeeze(recorded_particles.dp_i[:, 0]),
         "qx_i": qx_i,
         "qy_i": qy_i,
         "x_centroid": np.mean(recorded_particles.x_i, axis=1),
