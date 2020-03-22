@@ -742,12 +742,15 @@ class Simulation(object):
         # define a slice monitor
         from PyHEADTAIL.monitors.monitors import SliceMonitor
 
+        kwargs = {}
+        if hasattr(pp, 'slice_stats_to_store'):
+            kwargs['slice_stats_to_store'] = pp.slice_stats_to_store
         self.slice_monitor = SliceMonitor(
             "slice_evolution_%02d" % self.SimSt.present_simulation_part,
             pp.N_turns,
             self.slicer,
             {"Comment": "PyHDTL simulation"},
-            write_buffer_every=write_buffer_every,
+            write_buffer_every=write_buffer_every, **kwargs
         )
 
     def _setup_multijob_mode(self):
