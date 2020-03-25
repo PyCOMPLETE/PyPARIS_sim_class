@@ -137,10 +137,11 @@ epsn_y_max_growth_fraction = 0.5 # Stop on 50% vertical emittance blow-up
 
 ## Saving settings
 
-The ouput data is buffered and dumped to file at regular intervals. The lenght of such intervals van be specified by setting:
+The ouput data is buffered and dumped to file at regular intervals. The lenght of such intervals can be specified by setting:
 
 ```python
 write_buffer_every = 3
+slice_stats_to_store = [mean_x, mean_z] 
 ```
 
 ## Footprint mode
