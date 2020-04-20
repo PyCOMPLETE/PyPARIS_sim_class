@@ -577,9 +577,14 @@ class Simulation(object):
                         pp.n_slices_wake, z_cuts=(-pp.z_cut, pp.z_cut))
 
                 import PyHEADTAIL.impedances.wakes as wakes
-                wake = wakes.CircularResonator(R_shunt=pp.resonator_R_shunt,
+                wake = wakes.Resonator(R_shunt=pp.resonator_R_shunt,
                         frequency=pp.resonator_frequency,
-                        Q=pp.resonator_Q)
+                        Q=pp.resonator_Q,
+                        Yokoya_X1=pp.Yokoya_X1,
+                        Yokoya_Y1=pp.Yokoya_Y1,
+                        Yokoya_X2=pp.Yokoya_X2,
+                        Yokoya_Y2=pp.Yokoya_Y2,
+                        switch_Z=0)
                 wake_element = wakes.WakeField(slicer_for_wakefields, wake)
                 self.machine.one_turn_map.append(wake_element)
                 self.n_non_parallelizable += 1
