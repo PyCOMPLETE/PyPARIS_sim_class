@@ -112,11 +112,22 @@ For very long simulations it is convenient to split the simulations over several
 N_turns = 128 # Per job
 N_turns_target = 20000 # Entire simulation
 ```  
-For clusters using the LSF management system the job can be resubmitted automatically by setting:
+For clusters supporting job resubmissions the job can be resubmitted automatically by setting:
 ```python
 check_for_resubmit = True
 ```
-otherwise the user has to take care of the resubmission of the job.
+otherwise the user has to take care of the resubmission of the job. Current supported submission systems are:
+- HTCondor
+- SLURM
+The re-submission steup can be auto-configured using the optional parameter:
+```python
+submission_system = 'HTCondor' # 'Slurm' or lowercase equivalents
+```
+For `HTCondor`, the simulation will exit with the resubmit code (177), which has to be handled using DAGMan (see examples). To run a custom command when resubmitting the job instead, configure the parameter:
+```python
+resubmit_command = 'echo "resubmitting job"'
+```
+This parameter is set to `None` by default and if configured, it takes precedence over `submission_system`.
 
 The information about the multijob run is kept in the file ```simulation_status.sta```. This file needs to be removed to start the simulation from scratch.
 
@@ -270,4 +281,3 @@ resonator_frequency = 2e9
 resonator_Q = 1.
 n_slices_wake = 500
 ```
-

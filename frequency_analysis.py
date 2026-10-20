@@ -1,6 +1,9 @@
 import numpy as np
 
-import NAFFlib
+try:
+    import NAFFlib
+except ModuleNotFoundError:
+    import nafflib as NAFFlib
 
 def get_tunes(recorded_particles, filename_output=None):
 

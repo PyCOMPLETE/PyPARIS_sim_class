@@ -73,7 +73,7 @@ class LHC(BasicSynchrotron):
             pp.V_RF           = 12e6
             pp.dphi_RF        = 0.
             
-            pp.p0 = 7000e9 * e /c
+            pp.p0 = 6800e9 * e /c
             
 
         else:

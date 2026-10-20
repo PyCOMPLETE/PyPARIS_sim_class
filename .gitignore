@@ -5,3 +5,4 @@ __pycache__
 *.sta
 *.txt
 *.mat
+*.DS_Store*
